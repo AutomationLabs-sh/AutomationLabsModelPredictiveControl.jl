@@ -67,7 +67,7 @@ function proceed_controller(
     )
 
     # Get default parameters or user parameters
-    mpc_method_optimization = ImplementationProgrammingList[Symbol(mpc_programming_type)]
+    mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
 
     mpc_solver_choosen = get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
     mpc_solver_type = _IMPLEMENTATION_SOLVER_LIST[Symbol(mpc_solver_choosen)]
@@ -81,13 +81,13 @@ function proceed_controller(
     ### other parameters to be defined
 
     # Evaluate if mpc controller is quadratic or economic
-    if mpc_controller_type == "ModelPredictiveControl"
+    if mpc_controller_type == "model_predictive_control"
 
         # Get linearisation poitn references 
         mpc_references = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
 
         # Design the model predictive control controller
-        controller = ModelPredictiveControlDesign(system, 
+        controller = _model_predictive_control_design(system, 
                                       model_mlj_type,
                                       mpc_horizon, 
                                       mpc_method_optimization,
@@ -105,7 +105,7 @@ function proceed_controller(
     end
 
     # Evaluate if mpc controller is quadratic or economic
-    if mpc_controller_type == "EconomicModelPredictiveControl"
+    if mpc_controller_type == "economic_model_predictive_control"
 
         # Set references 
         mpc_linearization_point = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
@@ -216,7 +216,7 @@ function _design_reference_mpc(state_reference::Vector, input_reference::Vector,
     x = state_reference .* ones(size(state_reference,1), horizon + 1)
     u = input_reference .* ones(size(input_reference, 1), horizon)
 
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = ReferencesStateInput(x, u)
 
     return references
 end

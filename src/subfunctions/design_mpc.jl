@@ -38,10 +38,10 @@ struct   TakagiSugeno <: AbstractImplementation
         nbr_models::Int
 end
 
-const ImplementationProgrammingList = (
-    Linear = LinearProgramming(),
-    NonLinear = NonLinearProgramming(),
-    MixedLinear = MixedIntegerLinearProgramming(),
+const IMPLEMENTATION_PROGRAMMING_LIST = (
+    linear = LinearProgramming(),
+    non_linear = NonLinearProgramming(),
+    mixed_linear = MixedIntegerLinearProgramming(),
 )
 
 """
