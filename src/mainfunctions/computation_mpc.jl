@@ -32,7 +32,7 @@ function update_and_compute!(C::ModelPredictiveControlController, initialization
     end
 
     #Compute MPC
-    Calculate!(C)
+    calculate!(C)
 
 end
 
@@ -218,10 +218,6 @@ Model predictive control computation function. The controller is computed and op
 """
 function calculate!(C::ModelPredictiveControlController)
     
-    #vérification que la MPC peut être calculée correctement #to do
-    #try ...
-
-   # try
         #optimisation is done here
         JuMP.optimize!(C.tuning.modeler);
 
@@ -237,7 +233,4 @@ function calculate!(C::ModelPredictiveControlController)
         C.computation_results.x[:, :]    = JuMP.value.(x[:, :]);
         C.computation_results.e_x[:, :]  = JuMP.value.(e_x[:, :]);
     
-    #catch err
-    #    @error "The controler cannot be computed, something missing."
-    #end
 end

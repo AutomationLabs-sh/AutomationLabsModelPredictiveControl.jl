@@ -26,8 +26,13 @@ function _model_predictive_control_modeler_implementation(
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,
-    solver::AbstractSolvers,
+    solver::AbstractSolvers;
+    kws_...
 )
+
+    # Get argument kws
+    dict_kws = Dict{Symbol,Any}(kws_)
+    kws = get(dict_kws, :kws, kws_)
 
     #get constraints of the dynamical system
     x_hyperrectangle = LazySets.vertices_list(system.X)
@@ -59,11 +64,13 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, e_x[:, k+1] .== A * e_x[:, k] + B * e_u[:, k]) #output layer
     end
 
-    #States constraints
-    for k = 1:1:horizon+1
-        for i = 1:1:system.statedim
-            JuMP.@constraint(model_mpc, x[i, k] <= x_constraints[i, 2])
-            JuMP.@constraint(model_mpc, x_constraints[i, 1] <= x[i, k])
+    if haskey(kws, :mpc_state_constraint) == true 
+        #States constraints
+        for k = 1:1:horizon+1
+            for i = 1:1:system.statedim
+                JuMP.@constraint(model_mpc, x[i, k] <= x_constraints[i, 2])
+                JuMP.@constraint(model_mpc, x_constraints[i, 1] <= x[i, k])
+            end
         end
     end
 

@@ -7,44 +7,6 @@
 ########################################################
 
 """
-    AbstractImplementaiton
-An abstract type that should be subtyped for activation function extensions, mainly for relu.
-"""
-abstract type AbstractImplementation end
-
-"""
-    MixedIntegerLinearProgramming
-Milp tool for modeler implementation of Fnn and Resnet with relu activation function.
-"""
-struct MixedIntegerLinearProgramming <: AbstractImplementation end
-
-"""
-    NonLinearProgramming
-Nl tool for modeler implementation of Fnn and Resnet abd DenseNet with any activation function.
-"""
-struct NonLinearProgramming <: AbstractImplementation end
-
-"""
-    LinearProgramming
-Lienar tool for modeler implementation of neural networks.
-"""
-struct LinearProgramming <: AbstractImplementation end
-
-"""
-    TakagiSugeno
-Fuzzy tool for modeler implementation of neural networks.
-"""
-struct   TakagiSugeno <: AbstractImplementation 
-        nbr_models::Int
-end
-
-const IMPLEMENTATION_PROGRAMMING_LIST = (
-    linear = LinearProgramming(),
-    non_linear = NonLinearProgramming(),
-    mixed_linear = MixedIntegerLinearProgramming(),
-)
-
-"""
     _model_predictive_control_design
 Function that tunes a model predictive control.
 
@@ -54,17 +16,11 @@ Function that tunes a model predictive control.
 * `horizon`: horizon length of the model predictive control.
 * `method`: implementation method (linear, non linear, mixed integer linear, fuzzy rules)
 * `sample_time`: time sample of the model predictive control.
-
-** Optional fields **
-* `Q`: state weighting parameters.
-* `R`: input weighting parameters.
-* `S`: input rate weighting paramters.
-* `terminal_ingredients = false`: terminal ingredients of model predictive control
-* `Computation`: modeler, optimizer and sample time.
+* `kws` optional fields
 """
 function _model_predictive_control_design(system::Union{MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem, 
                                                     MathematicalSystems.ConstrainedLinearControlDiscreteSystem},
-                                      model_mlj::Union{AutomationLabsIdentification.linear, 
+                                        model_mlj::Union{AutomationLabsIdentification.linear, 
                                                    AutomationLabsIdentification.Fnn, 
                                                    AutomationLabsIdentification.Icnn,
                                                    AutomationLabsIdentification.ResNet, 
@@ -74,22 +30,29 @@ function _model_predictive_control_design(system::Union{MathematicalSystems.Cons
                                                    AutomationLabsIdentification.NeuralNetODE_type1, 
                                                    AutomationLabsIdentification.NeuralNetODE_type2, 
                                                    MLJMultivariateStatsInterface.MultitargetLinearRegressor},
-                                      horizon::Int, 
-                                      method::AbstractImplementation,
-                                      sample_time::Int, 
-                                      references::ReferencesStateInput;
-                                      Q::Float64 = 100.0, 
-                                      R::Float64 = 0.1,
-                                      S::Float64 = 0.0,
-                                      max_time::Float64 = 30.0,
-                                      terminal_ingredients::Bool = false, 
-                                      solver::AbstractSolvers = auto_solver_def()) #rather than the name of the solver
+                                        horizon::Int, 
+                                        method::AbstractImplementation,
+                                        sample_time::Int, 
+                                        references::ReferencesStateInput;
+                                        kws_...) 
 
+    # Get argument kws
+    dict_kws = Dict{Symbol,Any}(kws_)
+    kws = get(dict_kws, :kws, kws_)
+
+    # Solver selection
+    mpc_solver_choosen = get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
+    mpc_solver = _IMPLEMENTATION_SOLVER_LIST[Symbol(mpc_solver_choosen)]
+
+    # Terminal ingredient selection
+    mpc_terminal_ingredient = get(kws, :mpc_terminal_ingredient, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_terminal_ingredient])
+
+    # Others MPC parameters
+
+    mpc_max_time = get(kws, :mpc_max_time, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_max_time])
+    
     # create the weight of the controller
-    weights = _create_weights_coefficients( system, 
-                                           Q, 
-                                           R, 
-                                           S)
+    weights = _create_weights_coefficients(system; kws)
     
     # modeller implementation of model predictive control
     model_mpc = _model_predictive_control_modeler_implementation( method,
@@ -97,19 +60,22 @@ function _model_predictive_control_design(system::Union{MathematicalSystems.Cons
                                                              system,
                                                              horizon,
                                                              references, 
-                                                             solver)
+                                                             mpc_solver;
+                                                             kws)
 
     # implementetation of terminal ingredients
-    terminal, model_mpc = _create_terminal_ingredients( model_mpc, 
-                                                       terminal_ingredients,
-                                                       system, 
-                                                       references, 
-                                                       weights ) 
+    #terminal,
+    model_mpc, P_cost, terminal = _create_terminal_ingredient( model_mpc, 
+                                                        mpc_terminal_ingredient,
+                                                        system, 
+                                                        references, 
+                                                        weights;
+                                                        kws ) 
 
     # add the quadratic cost function to the modeler model
     model_mpc = _create_quadratic_cost_function( model_mpc, 
                                                 weights, 
-                                                terminal)
+                                                P_cost)
 
     ### struct design: MPC tuning ###
     tuning =  ModelPredictiveControlTuning( model_mpc,
@@ -118,7 +84,7 @@ function _model_predictive_control_design(system::Union{MathematicalSystems.Cons
                                             weights,
                                             terminal,
                                             sample_time,
-                                            max_time)
+                                            mpc_max_time)
     
     ### struct design: set the controller ###
     initialization, computation_results = _memory_allocation_initialization_results_mpc(system, horizon)
@@ -139,14 +105,17 @@ Function that create the weighting struct for model predictive control.
 
 ** Required fields **
 * `system`: the mathematical system from the dynamical system.
-* `Q`: the states weighting parameter.
-* `R`: the inputs weighting parameter.
-* `S`: the rate inputs weighting parameter.
+* `kws`: optional parameters.
 """
-function _create_weights_coefficients( system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem, 
-                                      Q::Float64, 
-                                      R::Float64, 
-                                      S::Float64)
+function _create_weights_coefficients( system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem; kws_...)
+
+    # Get argument kws
+    dict_kws = Dict{Symbol,Any}(kws_)
+    kws = get(dict_kws, :kws, kws_)
+
+    Q = get(kws, :mpc_Q, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_Q])
+    R = get(kws, :mpc_R, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_R])
+    S = get(kws, :mpc_S, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_S])
 
     #create the matrices
     QM = Q * LinearAlgebra.Matrix(LinearAlgebra.I, system.statedim, system.statedim)
@@ -156,10 +125,23 @@ function _create_weights_coefficients( system::MathematicalSystems.ConstrainedBl
     return WeightsCoefficient(QM, RM, SM)
 end
 
-function _create_weights_coefficients( system::MathematicalSystems.ConstrainedLinearControlDiscreteSystem, 
-                                        Q::Float64, 
-                                        R::Float64, 
-                                        S::Float64)
+"""
+    _create_weights_coefficients
+Function that create the weighting struct for model predictive control.
+
+** Required fields **
+* `system`: the mathematical system from the dynamical system.
+* `kws`: optional parameters.
+"""
+function _create_weights_coefficients( system::MathematicalSystems.ConstrainedLinearControlDiscreteSystem; kws_...)
+
+    # Get argument kws
+    dict_kws = Dict{Symbol,Any}(kws_)
+    kws = get(dict_kws, :kws, kws_)
+    
+    Q = get(kws, :mpc_Q, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_Q])
+    R = get(kws, :mpc_R, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_R])
+    S = get(kws, :mpc_S, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_S])
 
     #create the matrices
     QM = Q * LinearAlgebra.Matrix(LinearAlgebra.I, size(system.A, 1), size(system.A, 1))
@@ -169,97 +151,90 @@ function _create_weights_coefficients( system::MathematicalSystems.ConstrainedLi
     return WeightsCoefficient(QM, RM, SM)
 end
 
-
 """
-    _create_terminal_ingredients
+    _create_terminal_ingredient
 Function that create the terminal ingredient for model predictive control. The terminal ingredients are the terminal weight and terminal constraints. 
 The terminal constraints could be optional. 
 
 ** Required fields **
 * `model_mpc`: the JuMP from the modeler design.
-* `ingredients`: a boolean to set the terminal constraints.
+* `terminal_ingredient`: a string to set the terminal constraints.
 * `system`: the dynamical system mathemacal systems.
 * `references`: the states and inputs references.
 * `weights`: the weighting coefficients.
+* `kws` optional parameters.
 """
-function _create_terminal_ingredients( model_mpc::JuMP.Model,
-                                      ingredients::Bool,
-                                      system::Union{MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem, 
-                                                    MathematicalSystems.ConstrainedLinearControlDiscreteSystem},
+function _create_terminal_ingredient( model_mpc::JuMP.Model,
+                                      terminal_ingredient::String,
+                                      system,
                                       reference_in::ReferencesStateInput, 
-                                      weights::WeightsCoefficient)
+                                      weights::WeightsCoefficient; 
+                                      kws_...)
+
+    # Get argument kws
+    dict_kws = Dict{Symbol,Any}(kws_)
+    kws = get(dict_kws, :kws, kws_)
 
     #get the last references to compute the terminal ingredient
     state_reference = reference_in.x[:, end]
     input_reference = reference_in.u[:, end]
 
-    # evaluate if the user choses the terminal constraints
-    if ingredients == true
+    #get variable from model JuMP model_mpc
+    e_x = model_mpc[:e_x]
 
-        #Terminal ingredients from H. Chen and F. Allgower, A Quasi-Infinite Horizon Nonlinear Model Predictive
-        #Control Scheme with Guaranteed Stability, Automatica 1998
+    # Compute the terminal cost P with algebraix ricatti equation (ARE)
+    A_sys, B_sys = system_linearization(system, state_reference, input_reference)
+    P_cost =  ControlSystems.are(ControlSystems.Discrete, A_sys, B_sys, weights.Q, weights.R)
 
-        #Linearization to get A and B at references
-        A_sys, B_sys = system_linearization(system, state_reference, input_reference)
+    # Add the terminal constraints and evaluate if there are state constraint
+    if terminal_ingredient == "equality" && haskey(kws, :mpc_state_constraint) == true
+        JuMP.@constraint(model_mpc, e_x[:, end] .== 0)
 
-        #Calculate P matrix with ControlSystems and LQR
-        P =  ControlSystems.are(Discrete, A_sys, B_sys, weights.Q, weights.R)
+    elseif terminal_ingredient == "contractive" && haskey(kws, :mpc_state_constraint) == true
+        P_contract  = LinearAlgebra.Matrix(LinearAlgebra.I, size(e_x, 1), size(e_x, 1))
+        JuMP.@constraint(model_mpc, e_x[:,end]' * P_contract * e_x[:, end] <= 0.9*(e_x[:,begin]' * P_contract * e_x[:,begin]))
 
-        #Calculate Xf
-        A = A_sys - B_sys*K1
+    elseif terminal_ingredient == "neighborhood" && haskey(kws, :mpc_state_constraint) == true
 
-    #InvariantSets.jl
-    # """
-#     THEORY:
-#   Invariance: Region in which an autonomous system
-#   satisifies the constraints for all time.
-#
-#   Control Invariance: Region in which there exists a controller
-#   so that the system satisfies the constraints for all time.
-#
-#   A set 𝒪 is positive invariant if and only if 𝒪 ⊆ pre(𝒪)!
-#   """
+        # Get state constraint
+        mpc_state_constraint = kws[:mpc_state_constraint]
 
-    #Set new cost function with terminal cost P
-    if weights.R != 0 && weights.S != 0
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] + e_u[:,i]' * weights.R * e_u[:,i] + d_u[:,i]' * weights.S * d_[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i] )
-    
-    elseif weights.R != 0
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] + e_u[:,i]' * weights.R * e_u[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i])
-    
-    else
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i])
+        # Get input constraint
+        u_hyperrectangle = LazySets.vertices_list(system.U)
+        mpc_input_constraint = hcat(u_hyperrectangle[end], u_hyperrectangle[begin])
+ 
+        # Set constraints to zero with Lazy Sets
+        lower_state_constraints = mpc_state_constraint[:, 1] .- state_reference
+        higher_state_constraints = mpc_state_constraint[:, 2] .- state_reference
+        lower_input_constraints = mpc_input_constraint[:, 1] .- input_reference
+        higher_input_constraints = mpc_input_constraint[:, 2] .- input_reference
 
-    end
-
-    #Add terminal constraint
-    x = model_mpc[:x]
-    for i in 1 : nbr_states
-        JuMP.@constraint(model_mpc, (x_ter[i,1]  <= x[i,end]  <= x_ter[i,2] ))
-    end
-    
-        #const TerminalIngredients = TerminalIngredients2(true, P, Xf)
-        TerminalIngredients = TerminalIngredients2(true, P, Xf)
-
-        return TerminalIngredients, model_mpc
-
-    else
-        #no terminal constraints is choosen
-            
-        #Linearization to get A and B at references
-        A_sys, B_sys = system_linearization(system, state_reference, input_reference)
-
-        #Calculate P matrix with ControlSystems and LQR
-        P =  ControlSystems.are(ControlSystems.Discrete, A_sys, B_sys, weights.Q, weights.R)
+        X = LazySets.Hyperrectangle(low = lower_state_constraints, high = higher_state_constraints,)
+        U = LazySets.Hyperrectangle(low = lower_input_constraints, high = higher_input_constraints)
         
-        #set the struct from the package model predictive control
-        #const TerminalIngredients = TerminalIngredients1(false, P)
-        TerminalIngredients = TerminalIngredients1(false, P)
+        # LQR gain
+        L = ControlSystems.lqr(ControlSystems.Discrete, A_sys, B_sys, weights.Q, weights.R)
 
-        return TerminalIngredients, model_mpc
+        # Compute the terminal set
+        terminal_set = InvariantSets.terminal_set(A_sys, B_sys, X, U, L)
+
+        #Get Hx and bx
+        Hx, bx = InvariantSets.tosimplehrep(terminal_set)
+
+        # Add the terminal constraint to JuMP model
+        for i in 1 : 1 : size(Hx, 1)
+            JuMP.@constraint(model_mpc, e_x[:,end]' * Hx[i, :] <= bx[i])
+        end
+        
+    elseif terminal_ingredient == "none" && haskey(kws, :mpc_state_constraint) == true
+        #no terminal constraint to add
+   
+    else
+        #no terminal constraint to add
 
     end
 
+    return model_mpc, P_cost, TerminalIngredient(terminal_ingredient, P_cost) 
 
 end
 
@@ -270,12 +245,11 @@ Function that create the quadratic cost of the model predictive control.
 ** Required fields **
 * `model_mpc`: the JuMP struct.
 * `weights`: the weighing coefficient struct.
-* `terminal_ingredients`: the terminal ingredients struct.
-* `horizon`: the horizon parameters
+* `P_cost`: the terminal ingredient cost.
 """
 function _create_quadratic_cost_function(model_mpc::JuMP.Model, 
                                         weights::WeightsCoefficient, 
-                                        terminal_ingredients::AbstractTerminal)
+                                        P_cost)
 
     #get variable from model JuMP model_mpc
     u   = model_mpc[:u]
@@ -299,18 +273,18 @@ function _create_quadratic_cost_function(model_mpc::JuMP.Model,
 
     #Add the quadratic cost function according to weight parameters
     if weights.R[1,1] != 0.0 && weights.S[1,1] != 0.0
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
+        JuMP.@objective(model_mpc, Min, e_x[:,end]' * P_cost * e_x[:,end] +
                                          sum(e_x[:,i]' * weights.Q * e_x[:,i] + 
                                              e_u[:,i]' * weights.R * e_u[:,i] for i in 1:horizon) +
                                          sum(delta_u[:,i]' * weights.S * delta_u[:,i] for i in 1: horizon-1))
     
     elseif weights.R[1,1] != 0.0
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
+        JuMP.@objective(model_mpc, Min, e_x[:,end]' * P_cost * e_x[:,end] +
                                         sum(e_x[:,i]' * weights.Q * e_x[:,i] +
                                             e_u[:,i]' * weights.R * e_u[:,i] for i in 1:horizon))
     
     else
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
+        JuMP.@objective(model_mpc, Min, e_x[:,end]' * P_cost * e_x[:,end] +
                                         sum(e_x[:,i]' * weights.Q * e_x[:,i] for i in 1:horizon))
 
     end
@@ -318,7 +292,6 @@ function _create_quadratic_cost_function(model_mpc::JuMP.Model,
     return model_mpc
 
 end
-
 
 """
     system_linearization
@@ -403,8 +376,3 @@ function _memory_allocation_initialization_results_mpc(system::MathematicalSyste
 
     return initialization, computation_results
 end
-
-
-#######################################################
-# End Sub functions from _model_predictive_control_design #
-#######################################################

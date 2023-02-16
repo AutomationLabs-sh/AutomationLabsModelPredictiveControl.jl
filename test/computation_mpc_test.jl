@@ -8,9 +8,6 @@
 
 module ComputeModelPredictiveControl
 
-import Pkg
-Pkg.activate("/home/pierre/CleverCloud/modelpredictivecontrol/test/")
-
 using MLJ
 using MLJFlux
 using MLJTuning
@@ -24,10 +21,10 @@ using JuMP
 using Test
 using MathOptInterface
 
-using ModelPredictiveControl
+using AutomationLabsModelPredictiveControl
 
-import ModelPredictiveControl: auto_solver_def
-import ModelPredictiveControl: _model_predictive_control_design
+import AutomationLabsModelPredictiveControl: auto_solver_def
+import AutomationLabsModelPredictiveControl: _model_predictive_control_design
 
 @testset "compute fnn MPC: linear, non linear and milp" begin
 
@@ -75,15 +72,15 @@ import ModelPredictiveControl: _model_predictive_control_design
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
     ##############################
     ###           Fnn          ###                    
     ##############################
 
     ### Fnn L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
-    solver = ModelPredictiveControl.OSQP_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     C_fnn_linear = _model_predictive_control_design(
         QTP_sys_fnn,
         type_fnn,
@@ -96,9 +93,9 @@ import ModelPredictiveControl: _model_predictive_control_design
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_fnn_linear, initialization)
+    update_initialization!(C_fnn_linear, initialization)
 
-    Calculate!(C_fnn_linear)
+    calculate!(C_fnn_linear)
 
     C_fnn_linear.computation_results.x
     C_fnn_linear.computation_results.u
@@ -106,7 +103,7 @@ import ModelPredictiveControl: _model_predictive_control_design
     C_fnn_linear.computation_results.e_u
 
     ### Fnn N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_fnn_nl = _model_predictive_control_design(
         QTP_sys_fnn,
         type_fnn,
@@ -118,9 +115,9 @@ import ModelPredictiveControl: _model_predictive_control_design
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_fnn_nl, initialization)
+    update_initialization!(C_fnn_nl, initialization)
 
-    Calculate!(C_fnn_nl)
+    calculate!(C_fnn_nl)
 
     C_fnn_nl.computation_results.x
     C_fnn_nl.computation_results.u
@@ -128,8 +125,8 @@ import ModelPredictiveControl: _model_predictive_control_design
     C_fnn_nl.computation_results.e_u
 
     ### Fnn MILP MPC ###
-    method = ModelPredictiveControl.MixedIntegerLinearProgramming()
-    solver = ModelPredictiveControl.SCIP_solver_def()
+    method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.scip_solver_def()
     C_fnn_milp = _model_predictive_control_design(
         QTP_sys_fnn,
         type_fnn,
@@ -142,9 +139,9 @@ import ModelPredictiveControl: _model_predictive_control_design
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_fnn_milp, initialization)
+    update_initialization!(C_fnn_milp, initialization)
 
-    Calculate!(C_fnn_milp)
+    calculate!(C_fnn_milp)
 
     C_fnn_milp.computation_results.x
     C_fnn_milp.computation_results.u
@@ -218,7 +215,7 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
 
     ##############################
@@ -242,9 +239,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_resnet_linear, initialization)
+    update_initialization!(C_resnet_linear, initialization)
 
-    Calculate!(C_resnet_linear)
+    calculate!(C_resnet_linear)
 
     C_resnet_linear.computation_results.x
     C_resnet_linear.computation_results.u
@@ -252,7 +249,7 @@ end
     C_resnet_linear.computation_results.e_u
 
     ### ResNet N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_resnet_nl = _model_predictive_control_design(
         QTP_sys_resnet,
         type_resnet,
@@ -264,9 +261,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_resnet_nl, initialization)
+    update_initialization!(C_resnet_nl, initialization)
 
-    Calculate!(C_resnet_nl)
+    calculate!(C_resnet_nl)
 
     C_resnet_nl.computation_results.x
     C_resnet_nl.computation_results.u
@@ -274,9 +271,9 @@ end
     C_resnet_nl.computation_results.e_u
 
     ### ResNet MILP MPC ###
-    solver = ModelPredictiveControl.Mosek_solver_def()
+    solver = AutomationLabsModelPredictiveControl.Mosek_solver_def()
 
-    method = ModelPredictiveControl.MixedIntegerLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
     C_resnet_milp = _model_predictive_control_design(
         QTP_sys_resnet,
         type_resnet,
@@ -289,9 +286,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_resnet_milp, initialization)
+    update_initialization!(C_resnet_milp, initialization)
 
-    Calculate!(C_resnet_milp)
+    calculate!(C_resnet_milp)
 
     C_resnet_milp.computation_results.x
     C_resnet_milp.computation_results.u
@@ -378,7 +375,7 @@ end
 
 
     ### densenet L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
     C_densenet_linear = _model_predictive_control_design(
         QTP_sys_densenet,
         type_densenet,
@@ -390,9 +387,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_densenet_linear, initialization)
+    update_initialization!(C_densenet_linear, initialization)
 
-    Calculate!(C_densenet_linear)
+    calculate!(C_densenet_linear)
 
     C_densenet_linear.computation_results.x
     C_densenet_linear.computation_results.u
@@ -400,7 +397,7 @@ end
     C_densenet_linear.computation_results.e_u
 
     ### densenet N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_densenet_nl = _model_predictive_control_design(
         QTP_sys_densenet,
         type_densenet,
@@ -412,9 +409,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_densenet_nl, initialization)
+    update_initialization!(C_densenet_nl, initialization)
 
-    Calculate!(C_densenet_nl)
+    calculate!(C_densenet_nl)
 
     C_densenet_nl.computation_results.x
     C_densenet_nl.computation_results.u
@@ -422,8 +419,8 @@ end
     C_densenet_nl.computation_results.e_u
 
     ### densenet MILP MPC ###
-    method = ModelPredictiveControl.MixedIntegerLinearProgramming()
-    solver = ModelPredictiveControl.Mosek_solver_def()
+    method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.Mosek_solver_def()
 
     C_densenet_milp = _model_predictive_control_design(
         QTP_sys_densenet,
@@ -437,9 +434,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_densenet_milp, initialization)
+    update_initialization!(C_densenet_milp, initialization)
 
-    Calculate!(C_densenet_milp)
+    calculate!(C_densenet_milp)
 
     C_densenet_milp.computation_results.x
     C_densenet_milp.computation_results.u
@@ -516,7 +513,7 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
 
     ##############################
@@ -525,8 +522,8 @@ end
 
 
     ### polynet L MPC ###
-    solver = ModelPredictiveControl.OSQP_solver_def()
-    method = ModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
     C_polynet_linear = _model_predictive_control_design(
         QTP_sys_polynet,
         type_polynet,
@@ -540,9 +537,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_polynet_linear, initialization)
+    update_initialization!(C_polynet_linear, initialization)
 
-    Calculate!(C_polynet_linear)
+    calculate!(C_polynet_linear)
 
     C_polynet_linear.computation_results.x
     C_polynet_linear.computation_results.u
@@ -550,8 +547,8 @@ end
     C_polynet_linear.computation_results.e_u
 
     ### polynet N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
-    solver = ModelPredictiveControl.Ipopt_solver_def()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.Ipopt_solver_def()
 
     C_polynet_nl = _model_predictive_control_design(
         QTP_sys_polynet,
@@ -565,9 +562,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_polynet_nl, initialization)
+    update_initialization!(C_polynet_nl, initialization)
 
-    Calculate!(C_polynet_nl)
+    calculate!(C_polynet_nl)
 
     C_polynet_nl.computation_results.x
     C_polynet_nl.computation_results.u
@@ -590,9 +587,9 @@ end
 
     initialization = [0.5, 0.5, 0.5, 0.5]
 
-    UpdateInitialization!(C_polynet_milp, initialization)
+    update_initialization!(C_polynet_milp, initialization)
 
-    Calculate!(C_polynet_milp)
+    calculate!(C_polynet_milp)
 
     C_polynet_milp.computation_results.x
     C_polynet_milp.computation_results.u
@@ -669,15 +666,15 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
     ##############################
     ###           icnn          ###                    
     ##############################
 
     ### icnn L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
-    solver = ModelPredictiveControl.OSQP_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     C_icnn_linear = _model_predictive_control_design(
         QTP_sys_icnn,
         type_icnn,
@@ -690,9 +687,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_icnn_linear, initialization)
+    update_initialization!(C_icnn_linear, initialization)
 
-    Calculate!(C_icnn_linear)
+    calculate!(C_icnn_linear)
 
     C_icnn_linear.computation_results.x
     C_icnn_linear.computation_results.u
@@ -700,7 +697,7 @@ end
     C_icnn_linear.computation_results.e_u
 
     ### icnn N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_icnn_nl = _model_predictive_control_design(
         QTP_sys_icnn,
         type_icnn,
@@ -712,9 +709,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_icnn_nl, initialization)
+    update_initialization!(C_icnn_nl, initialization)
 
-    Calculate!(C_icnn_nl)
+    calculate!(C_icnn_nl)
 
     C_icnn_nl.computation_results.x
     C_icnn_nl.computation_results.u
@@ -722,8 +719,8 @@ end
     C_icnn_nl.computation_results.e_u
 
     ### icnn MILP MPC ###
-    method = ModelPredictiveControl.MixedIntegerLinearProgramming()
-    solver = ModelPredictiveControl.SCIP_solver_def()
+    method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.scip_solver_def()
     C_icnn_milp = _model_predictive_control_design(
         QTP_sys_icnn,
         type_icnn,
@@ -736,9 +733,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_icnn_milp, initialization)
+    update_initialization!(C_icnn_milp, initialization)
 
-    Calculate!(C_icnn_milp)
+    calculate!(C_icnn_milp)
 
     C_icnn_milp.computation_results.x
     C_icnn_milp.computation_results.u
@@ -810,15 +807,15 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
     ##############################
     ###           rbf          ###                    
     ##############################
 
     ### rbf L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
-    solver = ModelPredictiveControl.OSQP_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     C_rbf_linear = _model_predictive_control_design(
         QTP_sys_rbf,
         type_rbf,
@@ -831,9 +828,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_rbf_linear, initialization)
+    update_initialization!(C_rbf_linear, initialization)
 
-    Calculate!(C_rbf_linear)
+    calculate!(C_rbf_linear)
 
     C_rbf_linear.computation_results.x
     C_rbf_linear.computation_results.u
@@ -841,7 +838,7 @@ end
     C_rbf_linear.computation_results.e_u
 
     ### rbf N L MPC ###
-    method = ModelPredictiveControl.NonLinearProgramming()
+    method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_rbf_nl = _model_predictive_control_design(
         QTP_sys_rbf,
         type_rbf,
@@ -853,9 +850,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_rbf_nl, initialization)
+    update_initialization!(C_rbf_nl, initialization)
 
-    Calculate!(C_rbf_nl)
+    calculate!(C_rbf_nl)
 
     C_rbf_nl.computation_results.x
     C_rbf_nl.computation_results.u
@@ -921,15 +918,15 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
     ##############################
     ###  neuralnetODE_type1    ###                    
     ##############################
 
     ### neuralnetODE_type1 L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
-    solver = ModelPredictiveControl.OSQP_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     C_neuralnetODE_type1_linear = _model_predictive_control_design(
         QTP_sys_neuralnetODE_type1,
         type_neuralnetODE_type1,
@@ -942,9 +939,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_neuralnetODE_type1_linear, initialization)
+    update_initialization!(C_neuralnetODE_type1_linear, initialization)
 
-    Calculate!(C_neuralnetODE_type1_linear)
+    calculate!(C_neuralnetODE_type1_linear)
 
     C_neuralnetODE_type1_linear.computation_results.x
     C_neuralnetODE_type1_linear.computation_results.u
@@ -1008,15 +1005,15 @@ end
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
-    references = ModelPredictiveControl.ReferencesStateInput(x, u)
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
 
     ##############################
     ###  linear_regressor      ###                    
     ##############################
 
     ### linear_regressor L MPC ###
-    method = ModelPredictiveControl.LinearProgramming()
-    solver = ModelPredictiveControl.OSQP_solver_def()
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+    solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     C_linear_regressor_linear = _model_predictive_control_design(
         QTP_sys_linear_regressor,
         type_linear_regressor,
@@ -1029,9 +1026,9 @@ end
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
-    UpdateInitialization!(C_linear_regressor_linear, initialization)
+    update_initialization!(C_linear_regressor_linear, initialization)
 
-    Calculate!(C_linear_regressor_linear)
+    calculate!(C_linear_regressor_linear)
 
     C_linear_regressor_linear.computation_results.x
     C_linear_regressor_linear.computation_results.u

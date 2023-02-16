@@ -12,6 +12,7 @@ import Flux
 import ForwardDiff
 import HiGHS
 import AutomationLabsIdentification
+import InvariantSets
 import Ipopt
 import JuMP
 import LazySets
@@ -19,6 +20,7 @@ import MathematicalSystems
 import MosekTools
 import MLJ
 import OSQP
+import Polyhedra
 import SCIP
 import LinearAlgebra
 import MLJMultivariateStatsInterface
@@ -37,6 +39,7 @@ include("subfunctions/types.jl")
 include("subfunctions/design_mpc.jl")
 include("subfunctions/design_empc.jl")
 include("subfunctions/solver_selection.jl")
+include("subfunctions/design_systems.jl")
 
 # modeler implementation of models
 # Fnn

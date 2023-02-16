@@ -14,12 +14,16 @@ print("Testing design model predictive control...")
 took_seconds = @elapsed include("./design_mpc_implementation_test.jl");
 println("done (took ", took_seconds, " seconds)")
 
-print("Testing design economic model predictive control...")
-took_seconds = @elapsed include("./design_empc_implementation_test.jl");
-println("done (took ", took_seconds, " seconds)")
-
 print("Testing computation model predictive control...")
 took_seconds = @elapsed include("./computation_mpc_test.jl");
+println("done (took ", took_seconds, " seconds)")
+
+print("Testing computation terminal ingredient model predictive control...")
+took_seconds = @elapsed include("./terminal_ingredient_test.jl");
+println("done (took ", took_seconds, " seconds)")
+
+print("Testing design economic model predictive control...")
+took_seconds = @elapsed include("./design_empc_implementation_test.jl");
 println("done (took ", took_seconds, " seconds)")
 
 print("Testing computation economic model predictive control...")

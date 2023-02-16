@@ -9,7 +9,7 @@
 #NamedTuple default parameters definition
 const _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL = (
     mpc_solver = "auto",
-    mpc_terminal_ingredient = false,
+    mpc_terminal_ingredient = "none",
     mpc_Q = 100.0,
     mpc_R = 0.1,
     mpc_S = 0.0,
@@ -21,27 +21,21 @@ const _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL = (
 A function for model predictive control and economic model predictive control.
 
 The following variables are mendatories:
-* `machine_mlj`: a machine.
+* `machine_mlj`: a machine from AutomationLabsIdentification
 * `mpc_controller_type`: a string for model predictive control or economic model predictive control. 
-* `mpc_lower_state_constraints`: a constraint.
-* `mpc_higher_state_constraints`: a constraint.
-* `mpc_lower_input_constraints`: a constraint.
-* `mpc_higher_input_constraints`: a constraint.
+* `mpc_programming_type`: a string for LMPC, LIMPC or NLMPC
+* `mpc_input_constraints`: a constraint.
 * `mpc_horizon`: a horizon for the predictive controller.
 * `mpc_sample_time`: a sample time for the predictive controller.
 * `mpc_state_reference`: state reference for mpc or linearization point for empc. 
 * `mpc_input_reference`: input reference for mpc or linearization point for empc.
-
-It is possible to define optional variables for the controller.
+* `kws` optional argument.
 """
 function proceed_controller(
-    machine_mlj, #Type?
+    machine_mlj,
     mpc_controller_type::String,
     mpc_programming_type::String,
-    mpc_lower_state_constraints::Vector,
-    mpc_higher_state_constraints::Vector,
-    mpc_lower_input_constraints::Vector,
-    mpc_higher_input_constraints::Vector,
+    mpc_input_constraint::Matrix,
     mpc_horizon::Int,
     mpc_sample_time::Int, 
     mpc_state_reference::Vector, 
@@ -58,32 +52,21 @@ function proceed_controller(
 
     # System definition
     system = _controller_system_design(
-        model_mlj_type,
-        machine_mlj,
-        mpc_lower_state_constraints,
-        mpc_higher_state_constraints,
-        mpc_lower_input_constraints,
-        mpc_higher_input_constraints,
+            model_mlj_type,
+            machine_mlj,
+            mpc_input_constraint,
+            mpc_state_reference, 
+            mpc_input_reference;
+            kws
     )
 
     # Get default parameters or user parameters
     mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
 
-    mpc_solver_choosen = get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
-    mpc_solver_type = _IMPLEMENTATION_SOLVER_LIST[Symbol(mpc_solver_choosen)]
-
-    mpc_terminal_ingredient = get(kws, :mpc_terminal_ingredient, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_terminal_ingredient])
-    mpc_Q = get(kws, :mpc_Q, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_Q])
-    mpc_R = get(kws, :mpc_R, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_R])
-    mpc_S = get(kws, :mpc_S, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_S])
-    mpc_max_time = get(kws, :mpc_max_time, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_max_time])
-
-    ### other parameters to be defined
-
     # Evaluate if mpc controller is quadratic or economic
     if mpc_controller_type == "model_predictive_control"
 
-        # Get linearisation poitn references 
+        # Get mpc references over horizon 
         mpc_references = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
 
         # Design the model predictive control controller
@@ -93,15 +76,10 @@ function proceed_controller(
                                       mpc_method_optimization,
                                       mpc_sample_time, 
                                       mpc_references;
-                                      Q = mpc_Q, 
-                                      R = mpc_R,
-                                      S = mpc_S,
-                                      max_time = mpc_max_time,
-                                      terminal_ingredients = mpc_terminal_ingredient, 
-                                      solver = mpc_solver_type
+                                      kws
         ) 
 
-     return controller
+        return controller
     end
 
     # Evaluate if mpc controller is quadratic or economic
@@ -127,78 +105,6 @@ function proceed_controller(
 
         return controller
     end
-end
-
-"""
-    _controller_system_design
-A function for design the system (model and constrants) with MathematicalSystems for model predictive control and economic model predictive control.
-
-"""
-function _controller_system_design(
-    model_mlj::Union{AutomationLabsIdentification.Fnn, 
-                     AutomationLabsIdentification.Icnn,
-                     AutomationLabsIdentification.ResNet, 
-                     AutomationLabsIdentification.DenseNet, 
-                     AutomationLabsIdentification.Rbf, 
-                     AutomationLabsIdentification.PolyNet, 
-                     AutomationLabsIdentification.NeuralNetODE_type1, 
-                     AutomationLabsIdentification.NeuralNetODE_type2},
-    machine_mlj,
-    lower_state_constraints,
-    higher_state_constraints,
-    lower_input_constraints,
-    higher_input_constraints,
-    )
-
-    # Get state and input number
-    nbr_state = size(lower_state_constraints, 1)
-    nbr_input = size(lower_input_constraints, 1)
-
-    # Set constraints with Lazy Sets
-    x_cons = LazySets.Hyperrectangle(low = lower_state_constraints, high = higher_state_constraints,)
-    u_cons = LazySets.Hyperrectangle(low = lower_input_constraints, high = higher_input_constraints)
-        
-    # Extract best model from the machine
-    f_model = MLJ.fitted_params(MLJ.fitted_params(machine_mlj).machine).best_fitted_params[1]
-
-    # Set the system
-    system = MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(f_model, nbr_state, nbr_input, x_cons, u_cons)
-    
-    return system
-end
-
-"""
-    _controller_system_design
-A function for design the system (model and constrants) with MathematicalSystems for model predictive control and economic model predictive control.
-
-"""
-function _controller_system_design(
-    model_mlj::MLJMultivariateStatsInterface.MultitargetLinearRegressor,
-    machine_mlj,
-    lower_state_constraints,
-    higher_state_constraints,
-    lower_input_constraints,
-    higher_input_constraints,  
-    )
-
-    # Get state and input number
-    nbr_state = size(lower_state_constraints, 1)
-    nbr_input = size(lower_input_constraints, 1)
-    
-    # Set constraints with Lazy Sets
-    x_cons = LazySets.Hyperrectangle(low = lower_state_constraints, high = higher_state_constraints,)
-    u_cons = LazySets.Hyperrectangle(low = lower_input_constraints, high = higher_input_constraints)
-            
-    # Extract model from the machine
-    AB_t = MLJ.fitted_params(machine_mlj).coefficients
-    AB = copy(AB_t')
-    A = AB[:, 1:4]
-    B = AB[:, 5: end]
-
-    # Set the system
-    system = MathematicalSystems.ConstrainedLinearControlDiscreteSystem(A, B, x_cons, u_cons)
-
-    return system
 end
 
 """

@@ -64,14 +64,13 @@ Model predictive control without terminal ingredients.
 * `set`: bool if terminal ingredients are needed (0 or 1).
 * `P`: terminal matrix weight coefficient.
 """
-mutable struct TerminalIngredients1 <: AbstractTerminal
-    set::Bool
-    P::Matrix
-end
+#mutable struct TerminalIngredients1 <: AbstractTerminal
+#    set::Bool
+#    P::Matrix
+#end
 
-const TerminalIngredient = TerminalIngredients1
+#const TerminalIngredient = TerminalIngredients1
 
-#if terminal set is selection the struct is augmented
 """
     TerminalIngredients2
 Model predictive control with terminal ingredients.
@@ -81,11 +80,17 @@ Model predictive control with terminal ingredients.
 * `P`: terminal matrix weight coefficient.
 * `Xf`: terminal constraints.
 """
-mutable struct TerminalIngredients2 <: AbstractTerminal
-    set::Bool
-    P::Matrix    
-    Xf#::LazySets #type of Hyperrectangle lazySets
+#mutable struct TerminalIngredients2 <: AbstractTerminal
+#    set::Bool
+#    P::Matrix    
+#    Xf#::LazySets #type of Hyperrectangle lazySets
+#end
+
+mutable struct TerminalIngredient <: AbstractTerminal
+    Xf::String
+    P::Matrix
 end
+
 
 """
 	AbstractController
@@ -102,7 +107,7 @@ Model predictive control tuning implementation according to parameters and refer
 * `reference`: model predictive control references.
 * `horizon`: model predictive control horizon.
 * `weights`: model predictive control weighting coefficients.
-* `terminal_ingredients`: model predictive control terminal ingredients.
+* `terminal_ingredient`: model predictive control terminal ingredients.
 * `sample_time`: model predictive control sample time.
 * `max_time`: model predictive control maximum time computation.
 """
@@ -111,7 +116,7 @@ struct ModelPredictiveControlTuning <: AbstractController
 	reference::ReferencesStateInput
     horizon::Int
     weights::WeightsCoefficient
-    terminal_ingredients::Union{TerminalIngredients1, TerminalIngredients2}
+    terminal_ingredient::TerminalIngredient
     sample_time::Float64
     max_time::Int
 end
@@ -193,5 +198,89 @@ Automatique selection of the solver according to the method.
 struct auto_solver_def <: AbstractSolvers end
 
 
+"""
+    AbstractImplementaiton
+An abstract type that should be subtyped for activation function extensions, mainly for relu.
+"""
+abstract type AbstractImplementation end
 
+"""
+    MixedIntegerLinearProgramming
+Milp tool for modeler implementation of Fnn and Resnet with relu activation function.
+"""
+struct MixedIntegerLinearProgramming <: AbstractImplementation end
 
+"""
+    NonLinearProgramming
+Nl tool for modeler implementation of Fnn and Resnet abd DenseNet with any activation function.
+"""
+struct NonLinearProgramming <: AbstractImplementation end
+
+"""
+    LinearProgramming
+Linear tool for modeler implementation of neural networks.
+"""
+struct LinearProgramming <: AbstractImplementation end
+
+"""
+    FuzzyProgramming
+Linear fuzzy tool for modeler implementation of neural networks.
+"""
+struct FuzzyProgramming <: AbstractImplementation end
+
+"""
+    IMPLEMENTATION_PROGRAMMING_LIST = (
+Constant tuple programming list.
+"""
+const IMPLEMENTATION_PROGRAMMING_LIST = (
+    linear = LinearProgramming(),
+    non_linear = NonLinearProgramming(),
+    mixed_linear = MixedIntegerLinearProgramming(),
+    fuzzy_linear = FuzzyProgramming(),
+)
+
+#=
+
+"""
+    TakagiSugeno
+Fuzzy tool for modeler implementation of neural networks.
+"""
+struct   TakagiSugeno <: AbstractImplementation 
+        nbr_models::Int
+end
+
+"""
+	AbstractModel
+An abstract type that should be subtyped for model extensions (linear àr non linear)
+"""
+abstract type AbstractModel end
+
+"""
+    LinearModel
+Model predictive control tuning implementation according to parameters and references.
+
+** Fields **
+* `A`: state matrix.
+* `B`: input matrix.
+"""
+struct LinearModel <: AbstractModel
+    A::Matrix
+	B::Matrix
+end
+
+"""
+    NonLinearModel
+Model predictive control tuning implementation according to parameters and references.
+
+** Fields **
+* `f`: the non linear model.
+* `nbr_state`: the state number.
+* `nbr_input`: the input number
+"""
+struct NonLinearModel <: AbstractModel
+    f::Function
+	nbr_state::Int
+    nbr_input::Int
+end
+
+=#

@@ -8,9 +8,6 @@
 
 module ComputeEconomicModelPredictiveControl
 
-import Pkg
-Pkg.activate("/home/pierre/CleverCloud/modelpredictivecontrol/test/")
-
 using MLJ
 using MLJFlux
 using MLJTuning

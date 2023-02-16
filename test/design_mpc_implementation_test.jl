@@ -64,7 +64,7 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -88,7 +88,7 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     ### start evaluate FNN L MPC implementation ###
     @test C_fnn_linear.system == QTP_sys_fnn
     @test typeof(C_fnn_linear.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_fnn_linear.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_fnn_linear.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_fnn_linear.tuning.modeler)) == 6
     @test size(JuMP.object_dictionary(C_fnn_linear.tuning.modeler)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -112,8 +112,8 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     ]
     @test C_fnn_linear.tuning.reference == references
     @test C_fnn_linear.tuning.horizon == horizon
-    @test C_fnn_linear.tuning.terminal_ingredients.set == false
-    @test C_fnn_linear.tuning.terminal_ingredients.P != 0
+    @test C_fnn_linear.tuning.terminal_ingredient.Xf == "none"
+    @test C_fnn_linear.tuning.terminal_ingredient.P != 0
     @test C_fnn_linear.tuning.sample_time == 5.0
     @test C_fnn_linear.tuning.max_time == 30 #to modify
     @test size(C_fnn_linear.initialization) == (QTP_sys_fnn.statedim,)
@@ -163,7 +163,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -183,7 +183,7 @@ end
     ### start evaluate FNN NL MPC implementation ###
     @test C_fnn_nl.system == QTP_sys_fnn
     @test typeof(C_fnn_nl.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_fnn_nl.tuning.modeler) == "ipopt"
+    @test JuMP.solver_name(C_fnn_nl.tuning.modeler) == "Ipopt"
     @test length(JuMP.object_dictionary(C_fnn_nl.tuning.modeler)) == 7
     @test size(JuMP.object_dictionary(C_fnn_nl.tuning.modeler)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -206,8 +206,8 @@ end
     ]
     @test C_fnn_nl.tuning.reference == references
     @test C_fnn_nl.tuning.horizon == horizon
-    @test C_fnn_nl.tuning.terminal_ingredients.set == false
-    @test C_fnn_nl.tuning.terminal_ingredients.P != 0
+    @test C_fnn_nl.tuning.terminal_ingredient.Xf == "none"
+    @test C_fnn_nl.tuning.terminal_ingredient.P != 0
     @test C_fnn_nl.tuning.sample_time == 5.0
     @test C_fnn_nl.tuning.max_time == 30 #to modify
     @test size(C_fnn_nl.initialization) == (QTP_sys_fnn.statedim,)
@@ -257,7 +257,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -278,7 +278,7 @@ end
     ### start evaluate FNN MILP MPC implementation ###
     @test C_fnn_milp.system == QTP_sys_fnn
     @test typeof(C_fnn_milp.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_fnn_milp.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_fnn_milp.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_fnn_milp.tuning.modeler)) == 9
     @test size(JuMP.object_dictionary(C_fnn_milp.tuning.modeler)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -306,8 +306,8 @@ end
     ]
     @test C_fnn_milp.tuning.reference == references
     @test C_fnn_milp.tuning.horizon == horizon
-    @test C_fnn_milp.tuning.terminal_ingredients.set == false
-    @test C_fnn_milp.tuning.terminal_ingredients.P != 0
+    @test C_fnn_milp.tuning.terminal_ingredient.Xf == "none"
+    @test C_fnn_milp.tuning.terminal_ingredient.P != 0
     @test C_fnn_milp.tuning.sample_time == 5.0
     @test C_fnn_milp.tuning.max_time == 30 #to modify
     @test size(C_fnn_milp.initialization) == (QTP_sys_fnn.statedim,)
@@ -358,7 +358,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -382,7 +382,7 @@ end
     ### start evaluate icnn L MPC implementation ###
     @test C_icnn_linear.system == QTP_sys_icnn
     @test typeof(C_icnn_linear.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_icnn_linear.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_icnn_linear.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_icnn_linear.tuning.modeler)) == 6
     @test size(JuMP.object_dictionary(C_icnn_linear.tuning.modeler)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -406,8 +406,8 @@ end
     ]
     @test C_icnn_linear.tuning.reference == references
     @test C_icnn_linear.tuning.horizon == horizon
-    @test C_icnn_linear.tuning.terminal_ingredients.set == false
-    @test C_icnn_linear.tuning.terminal_ingredients.P != 0
+    @test C_icnn_linear.tuning.terminal_ingredient.Xf == "none"
+    @test C_icnn_linear.tuning.terminal_ingredient.P != 0
     @test C_icnn_linear.tuning.sample_time == 5.0
     @test C_icnn_linear.tuning.max_time == 30 #to modify
     @test size(C_icnn_linear.initialization) == (QTP_sys_icnn.statedim,)
@@ -457,7 +457,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -477,7 +477,7 @@ end
     ### start evaluate icnn NL MPC implementation ###
     @test C_icnn_nl.system == QTP_sys_icnn
     @test typeof(C_icnn_nl.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_icnn_nl.tuning.modeler) == "ipopt"
+    @test JuMP.solver_name(C_icnn_nl.tuning.modeler) == "Ipopt"
     @test length(JuMP.object_dictionary(C_icnn_nl.tuning.modeler)) == 7
     @test size(JuMP.object_dictionary(C_icnn_nl.tuning.modeler)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -500,8 +500,8 @@ end
     ]
     @test C_icnn_nl.tuning.reference == references
     @test C_icnn_nl.tuning.horizon == horizon
-    @test C_icnn_nl.tuning.terminal_ingredients.set == false
-    @test C_icnn_nl.tuning.terminal_ingredients.P != 0
+    @test C_icnn_nl.tuning.terminal_ingredient.Xf == "none"
+    @test C_icnn_nl.tuning.terminal_ingredient.P != 0
     @test C_icnn_nl.tuning.sample_time == 5.0
     @test C_icnn_nl.tuning.max_time == 30 #to modify
     @test size(C_icnn_nl.initialization) == (QTP_sys_icnn.statedim,)
@@ -551,7 +551,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -572,7 +572,7 @@ end
     ### start evaluate icnn MILP MPC implementation ###
     @test C_icnn_milp.system == QTP_sys_icnn
     @test typeof(C_icnn_milp.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_icnn_milp.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_icnn_milp.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_icnn_milp.tuning.modeler)) == 9
     @test size(JuMP.object_dictionary(C_icnn_milp.tuning.modeler)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -600,8 +600,8 @@ end
     ]
     @test C_icnn_milp.tuning.reference == references
     @test C_icnn_milp.tuning.horizon == horizon
-    @test C_icnn_milp.tuning.terminal_ingredients.set == false
-    @test C_icnn_milp.tuning.terminal_ingredients.P != 0
+    @test C_icnn_milp.tuning.terminal_ingredient.Xf == "none"
+    @test C_icnn_milp.tuning.terminal_ingredient.P != 0
     @test C_icnn_milp.tuning.sample_time == 5.0
     @test C_icnn_milp.tuning.max_time == 30 #to modify
     @test size(C_icnn_milp.initialization) == (QTP_sys_icnn.statedim,)
@@ -654,7 +654,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
@@ -674,7 +674,7 @@ end
     ### start evaluate resnet L MPC implementation ###
     @test C_resnet_linear.system == QTP_sys_resnet
     @test typeof(C_resnet_linear.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_resnet_linear.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_resnet_linear.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_resnet_linear.tuning.modeler)) == 6
     @test size(JuMP.object_dictionary(C_resnet_linear.tuning.modeler)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -698,8 +698,8 @@ end
     ]
     @test C_resnet_linear.tuning.reference == references
     @test C_resnet_linear.tuning.horizon == horizon
-    @test C_resnet_linear.tuning.terminal_ingredients.set == false
-    @test C_resnet_linear.tuning.terminal_ingredients.P != 0
+    @test C_resnet_linear.tuning.terminal_ingredient.Xf == "none"
+    @test C_resnet_linear.tuning.terminal_ingredient.P != 0
     @test C_resnet_linear.tuning.sample_time == 5.0
     @test C_resnet_linear.tuning.max_time == 30 #to modify
     @test size(C_resnet_linear.initialization) == (QTP_sys_resnet.statedim,)
@@ -755,7 +755,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
@@ -775,7 +775,7 @@ end
     ### start evaluate ResNet NL MPC implementation ###
     @test C_resnet_nl.system == QTP_sys_resnet
     @test typeof(C_resnet_nl.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_resnet_nl.tuning.modeler) == "ipopt"
+    @test JuMP.solver_name(C_resnet_nl.tuning.modeler) == "Ipopt"
     @test length(JuMP.object_dictionary(C_resnet_nl.tuning.modeler)) == 7
     @test size(JuMP.object_dictionary(C_resnet_nl.tuning.modeler)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -799,8 +799,8 @@ end
     ]
     @test C_resnet_nl.tuning.reference == references
     @test C_resnet_nl.tuning.horizon == horizon
-    @test C_resnet_nl.tuning.terminal_ingredients.set == false
-    @test C_resnet_nl.tuning.terminal_ingredients.P != 0
+    @test C_resnet_nl.tuning.terminal_ingredient.Xf == "none"
+    @test C_resnet_nl.tuning.terminal_ingredient.P != 0
     @test C_resnet_nl.tuning.sample_time == 5.0
     @test C_resnet_nl.tuning.max_time == 30 #to modify
     @test size(C_resnet_nl.initialization) == (QTP_sys_resnet.statedim,)
@@ -854,7 +854,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
     u = [1.2, 1.2] .* ones(2, horizon)
@@ -875,7 +875,7 @@ end
     ### start evaluate resnet MILP MPC implementation ###
     @test C_resnet_milp.system == QTP_sys_resnet
     @test typeof(C_resnet_milp.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_resnet_milp.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_resnet_milp.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_resnet_milp.tuning.modeler)) == 10
     @test size(JuMP.object_dictionary(C_resnet_milp.tuning.modeler)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -903,8 +903,8 @@ end
     ]
     @test C_resnet_milp.tuning.reference == references
     @test C_resnet_milp.tuning.horizon == horizon
-    @test C_resnet_milp.tuning.terminal_ingredients.set == false
-    @test C_resnet_milp.tuning.terminal_ingredients.P != 0
+    @test C_resnet_milp.tuning.terminal_ingredient.Xf == "none"
+    @test C_resnet_milp.tuning.terminal_ingredient.P != 0
     @test C_resnet_milp.tuning.sample_time == 5.0
     @test C_resnet_milp.tuning.max_time == 30 #to modify
     @test size(C_resnet_milp.initialization) == (QTP_sys_resnet.statedim,)
@@ -957,7 +957,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -977,7 +977,7 @@ end
     ### start evaluate densenet L MPC implementation ###
     @test C_densenet_linear.system == QTP_sys_densenet
     @test typeof(C_densenet_linear.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_densenet_linear.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_densenet_linear.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_densenet_linear.tuning.modeler)) == 6
     @test size(JuMP.object_dictionary(C_densenet_linear.tuning.modeler)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
@@ -1000,8 +1000,8 @@ end
     ]
     @test C_densenet_linear.tuning.reference == references
     @test C_densenet_linear.tuning.horizon == horizon
-    @test C_densenet_linear.tuning.terminal_ingredients.set == false
-    @test C_densenet_linear.tuning.terminal_ingredients.P != 0
+    @test C_densenet_linear.tuning.terminal_ingredient.Xf == "none"
+    @test C_densenet_linear.tuning.terminal_ingredient.P != 0
     @test C_densenet_linear.tuning.sample_time == 5.0
     @test C_densenet_linear.tuning.max_time == 30 #to modify
     @test size(C_densenet_linear.initialization) == (QTP_sys_densenet.statedim,)
@@ -1055,7 +1055,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -1075,8 +1075,8 @@ end
     ### start evaluate densenet NL MPC implementation ###
     @test C_densenet_nl.system == QTP_sys_densenet
     @test typeof(C_densenet_nl.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_densenet_nl.tuning.modeler) == "ipopt"
-    @test length(JuMP.object_dictionary(C_densenet_nl.tuning.modeler)) == 9
+    @test JuMP.solver_name(C_densenet_nl.tuning.modeler) == "Ipopt"
+    @test length(JuMP.object_dictionary(C_densenet_nl.tuning.modeler)) == 8
     @test size(JuMP.object_dictionary(C_densenet_nl.tuning.modeler)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(C_densenet_nl.tuning.modeler)[:u]) ==
@@ -1099,8 +1099,8 @@ end
     ]
     @test C_densenet_nl.tuning.reference == references
     @test C_densenet_nl.tuning.horizon == horizon
-    @test C_densenet_nl.tuning.terminal_ingredients.set == false
-    @test C_densenet_nl.tuning.terminal_ingredients.P != 0
+    @test C_densenet_nl.tuning.terminal_ingredient.Xf == "none"
+    @test C_densenet_nl.tuning.terminal_ingredient.P != 0
     @test C_densenet_nl.tuning.sample_time == 5.0
     @test C_densenet_nl.tuning.max_time == 30 #to modify
     @test size(C_densenet_nl.initialization) == (QTP_sys_densenet.statedim,)
@@ -1153,7 +1153,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -1172,8 +1172,8 @@ end
     ### start evaluate densenet milp MPC implementation ###
     @test C_densenet_milp.system == QTP_sys_densenet
     @test typeof(C_densenet_milp.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_densenet_milp.tuning.modeler) == "scip"
-    @test length(JuMP.object_dictionary(C_densenet_milp.tuning.modeler)) == 12
+    @test JuMP.solver_name(C_densenet_milp.tuning.modeler) == "SCIP"
+    @test length(JuMP.object_dictionary(C_densenet_milp.tuning.modeler)) == 11
     @test size(JuMP.object_dictionary(C_densenet_milp.tuning.modeler)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(C_densenet_milp.tuning.modeler)[:u]) ==
@@ -1197,8 +1197,8 @@ end
     ]
     @test C_densenet_milp.tuning.reference == references
     @test C_densenet_milp.tuning.horizon == horizon
-    @test C_densenet_milp.tuning.terminal_ingredients.set == false
-    @test C_densenet_milp.tuning.terminal_ingredients.P != 0
+    @test C_densenet_milp.tuning.terminal_ingredient.Xf == "none"
+    @test C_densenet_milp.tuning.terminal_ingredient.P != 0
     @test C_densenet_milp.tuning.sample_time == 5.0
     @test C_densenet_milp.tuning.max_time == 30 #to modify
     @test size(C_densenet_milp.initialization) == (QTP_sys_densenet.statedim,)
@@ -1254,7 +1254,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -1278,7 +1278,7 @@ end
     ### start evaluate rbf L MPC implementation ###
     @test C_rbf_linear.system == QTP_sys_rbf
     @test typeof(C_rbf_linear.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_rbf_linear.tuning.modeler) == "scip"
+    @test JuMP.solver_name(C_rbf_linear.tuning.modeler) == "SCIP"
     @test length(JuMP.object_dictionary(C_rbf_linear.tuning.modeler)) == 6
     @test size(JuMP.object_dictionary(C_rbf_linear.tuning.modeler)[:u_reference]) ==
           (QTP_sys_rbf.inputdim, horizon)
@@ -1302,8 +1302,8 @@ end
     ]
     @test C_rbf_linear.tuning.reference == references
     @test C_rbf_linear.tuning.horizon == horizon
-    @test C_rbf_linear.tuning.terminal_ingredients.set == false
-    @test C_rbf_linear.tuning.terminal_ingredients.P != 0
+    @test C_rbf_linear.tuning.terminal_ingredient.Xf == "none"
+    @test C_rbf_linear.tuning.terminal_ingredient.P != 0
     @test C_rbf_linear.tuning.sample_time == 5.0
     @test C_rbf_linear.tuning.max_time == 30 #to modify
     @test size(C_rbf_linear.initialization) == (QTP_sys_rbf.statedim,)
@@ -1353,7 +1353,7 @@ end
     #MPC design parameters
     horizon = 15
     sample_time = 5
-    terminal_ingredients = false
+    terminal_ingredient = false
     max_time = 5
     x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
     u = [1.2, 1.2] * ones(1, horizon)
@@ -1373,7 +1373,7 @@ end
     ### start evaluate rbf NL MPC implementation ###
     @test C_rbf_nl.system == QTP_sys_rbf
     @test typeof(C_rbf_nl.tuning.modeler) == JuMP.Model
-    @test JuMP.solver_name(C_rbf_nl.tuning.modeler) == "ipopt"
+    @test JuMP.solver_name(C_rbf_nl.tuning.modeler) == "Ipopt"
     @test length(JuMP.object_dictionary(C_rbf_nl.tuning.modeler)) == 7
     @test size(JuMP.object_dictionary(C_rbf_nl.tuning.modeler)[:u_reference]) ==
           (QTP_sys_rbf.inputdim, horizon)
@@ -1396,8 +1396,8 @@ end
     ]
     @test C_rbf_nl.tuning.reference == references
     @test C_rbf_nl.tuning.horizon == horizon
-    @test C_rbf_nl.tuning.terminal_ingredients.set == false
-    @test C_rbf_nl.tuning.terminal_ingredients.P != 0
+    @test C_rbf_nl.tuning.terminal_ingredient.Xf == "none"
+    @test C_rbf_nl.tuning.terminal_ingredient.P != 0
     @test C_rbf_nl.tuning.sample_time == 5.0
     @test C_rbf_nl.tuning.max_time == 30 #to modify
     @test size(C_rbf_nl.initialization) == (QTP_sys_rbf.statedim,)
@@ -1451,7 +1451,7 @@ end
       #MPC design parameters
       horizon = 15
       sample_time = 5
-      terminal_ingredients = false
+      terminal_ingredient = false
       max_time = 5
       x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
       u = [1.2, 1.2] .* ones(2, horizon)
@@ -1471,7 +1471,7 @@ end
       ### start evaluate polynet L MPC implementation ###
       @test C_polynet_linear.system == QTP_sys_polynet
       @test typeof(C_polynet_linear.tuning.modeler) == JuMP.Model
-      @test JuMP.solver_name(C_polynet_linear.tuning.modeler) == "scip"
+      @test JuMP.solver_name(C_polynet_linear.tuning.modeler) == "SCIP"
       @test length(JuMP.object_dictionary(C_polynet_linear.tuning.modeler)) == 6
       @test size(JuMP.object_dictionary(C_polynet_linear.tuning.modeler)[:u_reference]) ==
             (QTP_sys_polynet.inputdim, horizon)
@@ -1495,8 +1495,8 @@ end
       ]
       @test C_polynet_linear.tuning.reference == references
       @test C_polynet_linear.tuning.horizon == horizon
-      @test C_polynet_linear.tuning.terminal_ingredients.set == false
-      @test C_polynet_linear.tuning.terminal_ingredients.P != 0
+      @test C_polynet_linear.tuning.terminal_ingredient.Xf == "none"
+      @test C_polynet_linear.tuning.terminal_ingredient.P != 0
       @test C_polynet_linear.tuning.sample_time == 5.0
       @test C_polynet_linear.tuning.max_time == 30 #to modify
       @test size(C_polynet_linear.initialization) == (QTP_sys_polynet.statedim,)
@@ -1552,7 +1552,7 @@ end
       #MPC design parameters
       horizon = 15
       sample_time = 5
-      terminal_ingredients = false
+      terminal_ingredient = false
       max_time = 5
       x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
       u = [1.2, 1.2] .* ones(2, horizon)
@@ -1572,7 +1572,7 @@ end
       ### start evaluate polynet NL MPC implementation ###
       @test C_polynet_nl.system == QTP_sys_polynet
       @test typeof(C_polynet_nl.tuning.modeler) == JuMP.Model
-      @test JuMP.solver_name(C_polynet_nl.tuning.modeler) == "ipopt"
+      @test JuMP.solver_name(C_polynet_nl.tuning.modeler) == "Ipopt"
       @test length(JuMP.object_dictionary(C_polynet_nl.tuning.modeler)) == 8
       @test size(JuMP.object_dictionary(C_polynet_nl.tuning.modeler)[:u_reference]) ==
             (QTP_sys_polynet.inputdim, horizon)
@@ -1596,8 +1596,8 @@ end
       ]
       @test C_polynet_nl.tuning.reference == references
       @test C_polynet_nl.tuning.horizon == horizon
-      @test C_polynet_nl.tuning.terminal_ingredients.set == false
-      @test C_polynet_nl.tuning.terminal_ingredients.P != 0
+      @test C_polynet_nl.tuning.terminal_ingredient.Xf == "none"
+      @test C_polynet_nl.tuning.terminal_ingredient.P != 0
       @test C_polynet_nl.tuning.sample_time == 5.0
       @test C_polynet_nl.tuning.max_time == 30 #to modify
       @test size(C_polynet_nl.initialization) == (QTP_sys_polynet.statedim,)
@@ -1651,7 +1651,7 @@ end
       #MPC design parameters
       horizon = 15
       sample_time = 5
-      terminal_ingredients = false
+      terminal_ingredient = false
       max_time = 5
       x = [0.65, 0.65, 0.65, 0.65] .* ones(4, horizon + 1)
       u = [1.2, 1.2] .* ones(2, horizon)
@@ -1672,7 +1672,7 @@ end
       ### start evaluate polynet MILP MPC implementation ###
       @test C_polynet_milp.system == QTP_sys_polynet
       @test typeof(C_polynet_milp.tuning.modeler) == JuMP.Model
-      @test JuMP.solver_name(C_polynet_milp.tuning.modeler) == "scip"
+      @test JuMP.solver_name(C_polynet_milp.tuning.modeler) == "SCIP"
       @test length(JuMP.object_dictionary(C_polynet_milp.tuning.modeler)) == 10
       @test size(JuMP.object_dictionary(C_polynet_milp.tuning.modeler)[:u_reference]) ==
             (QTP_sys_polynet.inputdim, horizon)
@@ -1700,8 +1700,8 @@ end
       ]
       @test C_polynet_milp.tuning.reference == references
       @test C_polynet_milp.tuning.horizon == horizon
-      @test C_polynet_milp.tuning.terminal_ingredients.set == false
-      @test C_polynet_milp.tuning.terminal_ingredients.P != 0
+      @test C_polynet_milp.tuning.terminal_ingredient.Xf == false
+      @test C_polynet_milp.tuning.terminal_ingredient.P != 0
       @test C_polynet_milp.tuning.sample_time == 5.0
       @test C_polynet_milp.tuning.max_time == 30 #to modify
       @test size(C_polynet_milp.initialization) == (QTP_sys_polynet.statedim,)
@@ -1758,7 +1758,7 @@ end
       #MPC design parameters
       horizon = 15
       sample_time = 5
-      terminal_ingredients = false
+      terminal_ingredient = false
       max_time = 5
       x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
       u = [1.2, 1.2] * ones(1, horizon)
@@ -1782,7 +1782,7 @@ end
       ### start evaluate linear_regressor L MPC implementation ###
       @test C_linear_regressor_linear.system == QTP_sys_linear_regressor
       @test typeof(C_linear_regressor_linear.tuning.modeler) == JuMP.Model
-      @test JuMP.solver_name(C_linear_regressor_linear.tuning.modeler) == "scip"
+      @test JuMP.solver_name(C_linear_regressor_linear.tuning.modeler) == "SCIP"
       @test length(JuMP.object_dictionary(C_linear_regressor_linear.tuning.modeler)) == 6
       @test size(JuMP.object_dictionary(C_linear_regressor_linear.tuning.modeler)[:u_reference]) ==
             (size(QTP_sys_linear_regressor.B, 2), horizon)
@@ -1805,8 +1805,8 @@ end
       ]
       @test C_linear_regressor_linear.tuning.reference == references
       @test C_linear_regressor_linear.tuning.horizon == horizon
-      @test C_linear_regressor_linear.tuning.terminal_ingredients.set == false
-      @test C_linear_regressor_linear.tuning.terminal_ingredients.P != 0
+      @test C_linear_regressor_linear.tuning.terminal_ingredient.Xf == "none"
+      @test C_linear_regressor_linear.tuning.terminal_ingredient.P != 0
       @test C_linear_regressor_linear.tuning.sample_time == 5.0
       @test C_linear_regressor_linear.tuning.max_time == 30 #to modify
       @test size(C_linear_regressor_linear.initialization) == (size(QTP_sys_linear_regressor.A, 1),)
@@ -1856,7 +1856,7 @@ end
       #MPC design parameters
       horizon = 15
       sample_time = 5
-      terminal_ingredients = false
+      terminal_ingredient = false
       max_time = 5
       x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
       u = [1.2, 1.2] * ones(1, horizon)
@@ -1880,7 +1880,7 @@ end
       ### start evaluate neuralnetODE_type1 L MPC implementation ###
       @test C_neuralnetODE_type1_linear.system == QTP_sys_neuralnetODE_type1
       @test typeof(C_neuralnetODE_type1_linear.tuning.modeler) == JuMP.Model
-      @test JuMP.solver_name(C_neuralnetODE_type1_linear.tuning.modeler) == "scip"
+      @test JuMP.solver_name(C_neuralnetODE_type1_linear.tuning.modeler) == "SCIP"
       @test length(JuMP.object_dictionary(C_neuralnetODE_type1_linear.tuning.modeler)) == 6
       @test size(JuMP.object_dictionary(C_neuralnetODE_type1_linear.tuning.modeler)[:u_reference]) ==
             (QTP_sys_neuralnetODE_type1.inputdim, horizon)
@@ -1904,8 +1904,8 @@ end
       ]
       @test C_neuralnetODE_type1_linear.tuning.reference == references
       @test C_neuralnetODE_type1_linear.tuning.horizon == horizon
-      @test C_neuralnetODE_type1_linear.tuning.terminal_ingredients.set == false
-      @test C_neuralnetODE_type1_linear.tuning.terminal_ingredients.P != 0
+      @test C_neuralnetODE_type1_linear.tuning.terminal_ingredient.Xf == "none"
+      @test C_neuralnetODE_type1_linear.tuning.terminal_ingredient.P != 0
       @test C_neuralnetODE_type1_linear.tuning.sample_time == 5.0
       @test C_neuralnetODE_type1_linear.tuning.max_time == 30 #to modify
       @test size(C_neuralnetODE_type1_linear.initialization) == (QTP_sys_neuralnetODE_type1.statedim,)

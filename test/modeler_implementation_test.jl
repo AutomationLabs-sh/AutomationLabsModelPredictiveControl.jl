@@ -87,7 +87,7 @@ import AutomationLabsModelPredictiveControl: _JuMP_model_definition
 
     ### start evaluate FNN L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -169,7 +169,7 @@ end
 
     ### start evaluate FNN L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 7
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -251,7 +251,7 @@ end
 
     ### start evaluate FNN L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 9
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_fnn.inputdim, horizon)
@@ -335,7 +335,7 @@ end
 
     ### start evaluate resnet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -419,7 +419,7 @@ end
 
     ### start evaluate Resnet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 7
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -503,7 +503,7 @@ end
 
     ### start evaluate Resnet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 10
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_resnet.inputdim, horizon)
@@ -590,7 +590,7 @@ end
 
     ### start evaluate densenet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
@@ -675,8 +675,8 @@ end
 
     ### start evaluate densenet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
-    @test length(JuMP.object_dictionary(modeler_mpc)) == 9
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 8
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
@@ -760,8 +760,8 @@ end
 
     ### start evaluate densenet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
-    @test length(JuMP.object_dictionary(modeler_mpc)) == 12
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 11
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
@@ -847,7 +847,7 @@ end
 
     ### start evaluate icnn L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -930,7 +930,7 @@ end
 
     ### start evaluate icnn L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 7
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -1013,7 +1013,7 @@ end
 
     ### start evaluate icnn L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 9
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_icnn.inputdim, horizon)
@@ -1099,7 +1099,7 @@ end
 
     ### start evaluate rbf L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_rbf.inputdim, horizon)
@@ -1181,7 +1181,7 @@ end
 
     ### start evaluate rbf L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 7
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_rbf.inputdim, horizon)
@@ -1264,7 +1264,7 @@ end
 
     ### start evaluate polynet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_polynet.inputdim, horizon)
@@ -1346,7 +1346,7 @@ end
 
     ### start evaluate polynet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "ipopt"
+    @test JuMP.solver_name(modeler_mpc) == "Ipopt"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 8
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_polynet.inputdim, horizon)
@@ -1429,7 +1429,7 @@ end
 
     ### start evaluate polynet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 10
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_polynet.inputdim, horizon)
@@ -1522,7 +1522,7 @@ end
 
     ### start evaluate linear_regressor L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (size(QTP_sys_linear_regressor.B, 2), horizon)
@@ -1604,7 +1604,7 @@ end
 
     ### start evaluate neuralnetODE_type1 L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "scip"
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_neuralnetODE_type1.inputdim, horizon)
