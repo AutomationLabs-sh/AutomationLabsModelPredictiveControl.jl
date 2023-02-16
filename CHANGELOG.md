@@ -1,5 +1,9 @@
 # AutomationLabsModelPredictiveControl Changelog
 
+## v0.1.3
+
+* tests improvement
+
 ## v0.1.2
 
 * Update dependencies.

@@ -15,12 +15,8 @@ using MLJBase
 using MLJParticleSwarmOptimization
 using StableRNGs
 using AutomationLabsIdentification
-#using MathematicalSystems
-#using LazySets
 using JuMP
 using Test
-#using MathOptInterface
-
 using AutomationLabsModelPredictiveControl
 
 @testset "None terminal ingredient and none state constraint computation" begin
