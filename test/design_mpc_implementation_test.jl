@@ -75,14 +75,12 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     ##############################
 
     ### Fnn L MPC ###
-    method = AutomationLabsModelPredictiveControl.LinearProgramming()
     C_fnn_linear = _model_predictive_control_design(
         QTP_sys_fnn,
-        type_fnn,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear"
     )
 
     ### start evaluate FNN L MPC implementation ###
@@ -172,13 +170,12 @@ end
     ### Fnn NL MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_fnn_nl = _model_predictive_control_design(
-        QTP_sys_fnn,
-        type_fnn,
-        horizon,
-        method,
-        sample_time,
-        references,
-    )
+      QTP_sys_fnn,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "non_linear"
+  )
 
     ### start evaluate FNN NL MPC implementation ###
     @test C_fnn_nl.system == QTP_sys_fnn
@@ -267,13 +264,12 @@ end
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
     
     C_fnn_milp = _model_predictive_control_design(
-        QTP_sys_fnn,
-        type_fnn,
-        horizon,
-        method,
-        sample_time,
-        references,
-    )
+      QTP_sys_fnn,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "mixed_linear"
+  )
 
     ### start evaluate FNN MILP MPC implementation ###
     @test C_fnn_milp.system == QTP_sys_fnn
@@ -317,8 +313,6 @@ end
     @test size(C_fnn_milp.computation_results.e_u) == (QTP_sys_fnn.inputdim, horizon)
 
 end
-
-
 
 @testset "design linear Model Predictive Control with icnn model" begin
 
@@ -370,14 +364,14 @@ end
 
     ### icnn L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
     C_icnn_linear = _model_predictive_control_design(
-        QTP_sys_icnn,
-        type_icnn,
-        horizon,
-        method,
-        sample_time,
-        references,
-    )
+      QTP_sys_icnn,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "linear"
+  )
 
     ### start evaluate icnn L MPC implementation ###
     @test C_icnn_linear.system == QTP_sys_icnn
@@ -465,13 +459,13 @@ end
 
     ### icnn NL MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_icnn_nl = _model_predictive_control_design(
-        QTP_sys_icnn,
-        type_icnn,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_icnn,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "non_linear"
     )
 
     ### start evaluate icnn NL MPC implementation ###
@@ -561,12 +555,11 @@ end
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
     
     C_icnn_milp = _model_predictive_control_design(
-        QTP_sys_icnn,
-        type_icnn,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_icnn,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "mixed_linear"
     )
 
     ### start evaluate icnn MILP MPC implementation ###
@@ -662,13 +655,13 @@ end
 
     ### ResNet L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
     C_resnet_linear = _model_predictive_control_design(
-        QTP_sys_resnet,
-        type_resnet,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_resnet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "linear"
     )
 
     ### start evaluate resnet L MPC implementation ###
@@ -763,13 +756,13 @@ end
 
     ### ResNet N L MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_resnet_nl = _model_predictive_control_design(
-        QTP_sys_resnet,
-        type_resnet,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_resnet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "non_linear"
     )
 
     ### start evaluate ResNet NL MPC implementation ###
@@ -862,15 +855,14 @@ end
 
     ### ResNet MILP MPC ###
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
-    C_resnet_milp = _model_predictive_control_design(
-        QTP_sys_resnet,
-        type_resnet,
-        horizon,
-        method,
-        sample_time,
-        references,
-    )
 
+    C_resnet_milp = _model_predictive_control_design(
+      QTP_sys_resnet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "mixed_linear"
+    )
 
     ### start evaluate resnet MILP MPC implementation ###
     @test C_resnet_milp.system == QTP_sys_resnet
@@ -965,13 +957,13 @@ end
 
     #DenseNet design linear
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
     C_densenet_linear = _model_predictive_control_design(
-        QTP_sys_densenet,
-        type_densenet,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_densenet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "linear"
     )
 
     ### start evaluate densenet L MPC implementation ###
@@ -1063,13 +1055,13 @@ end
 
     #DenseNet design non-linear
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_densenet_nl = _model_predictive_control_design(
-        QTP_sys_densenet,
-        type_densenet,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_densenet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "non_linear"
     )
 
     ### start evaluate densenet NL MPC implementation ###
@@ -1161,14 +1153,15 @@ end
 
     #DenseNet design MILP
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
+
     C_densenet_milp = _model_predictive_control_design(
-        QTP_sys_densenet,
-        type_densenet,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_densenet,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "mixed_linear"
     )
+
     ### start evaluate densenet milp MPC implementation ###
     @test C_densenet_milp.system == QTP_sys_densenet
     @test typeof(C_densenet_milp.tuning.modeler) == JuMP.Model
@@ -1266,13 +1259,13 @@ end
 
     ### rbf L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
-    C_rbf_linear = _model_predictive_control_design(
-        QTP_sys_rbf,
-        type_rbf,
-        horizon,
-        method,
-        sample_time,
-        references,
+
+     C_rbf_linear = _model_predictive_control_design(
+      QTP_sys_rbf,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "linear"
     )
 
     ### start evaluate rbf L MPC implementation ###
@@ -1361,13 +1354,13 @@ end
 
     ### rbf NL MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_rbf_nl = _model_predictive_control_design(
-        QTP_sys_rbf,
-        type_rbf,
-        horizon,
-        method,
-        sample_time,
-        references,
+      QTP_sys_rbf,
+      horizon,
+      sample_time,
+      references;
+      mpc_programming_type = "non_linear"
     )
 
     ### start evaluate rbf NL MPC implementation ###
@@ -1459,13 +1452,13 @@ end
   
       ### polynet L MPC ###
       method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
       C_polynet_linear = _model_predictive_control_design(
-          QTP_sys_polynet,
-          type_polynet,
-          horizon,
-          method,
-          sample_time,
-          references,
+            QTP_sys_polynet,
+            horizon,
+            sample_time,
+            references;
+            mpc_programming_type = "linear"
       )
   
       ### start evaluate polynet L MPC implementation ###
@@ -1560,13 +1553,13 @@ end
   
       ### polynet N L MPC ###
       method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
       C_polynet_nl = _model_predictive_control_design(
-          QTP_sys_polynet,
-          type_polynet,
-          horizon,
-          method,
-          sample_time,
-          references,
+            QTP_sys_polynet,
+            horizon,
+            sample_time,
+            references;
+            mpc_programming_type = "non_linear"
       )
   
       ### start evaluate polynet NL MPC implementation ###
@@ -1770,13 +1763,12 @@ end
   
       ### linear_regressor L MPC ###
       method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
       C_linear_regressor_linear = _model_predictive_control_design(
-          QTP_sys_linear_regressor,
-          type_linear_regressor,
-          horizon,
-          method,
-          sample_time,
-          references,
+            QTP_sys_linear_regressor,
+            horizon,
+            sample_time,
+            references;
       )
   
       ### start evaluate linear_regressor L MPC implementation ###
@@ -1868,13 +1860,13 @@ end
   
       ### neuralnetODE_type1 L MPC ###
       method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
       C_neuralnetODE_type1_linear = _model_predictive_control_design(
-          QTP_sys_neuralnetODE_type1,
-          type_neuralnetODE_type1,
-          horizon,
-          method,
-          sample_time,
-          references,
+            QTP_sys_neuralnetODE_type1,
+            horizon,
+            sample_time,
+            references;
+            mpc_programming_type = "linear"
       )
   
       ### start evaluate neuralnetODE_type1 L MPC implementation ###

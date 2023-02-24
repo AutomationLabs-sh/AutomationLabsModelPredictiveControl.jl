@@ -7,6 +7,7 @@ Welcome to AutomationLabsModelPredictiveControl.jl package. AutomationLabsModelP
 This package uses the following packages:
 
 * [AutomationLabsIdentification](https://github.com/AutomationLabs-sh/AutomationLabsIdentification.jl) with Mozilla Public License version 2.0
+* [AutomationLabsSystems](https://github.com/AutomationLabs-sh/AutomationLabsSystems.jl) with Mozilla Public License version 2.0
 * [ControlSystems](https://github.com/JuliaControl/ControlSystems.jl) with MIT licence
 * [Flux](https://github.com/FluxML/Flux.jl) with MIT licence
 * [ForwarDiff](https://github.com/JuliaDiff/ForwardDiff.jl) with MIT licence

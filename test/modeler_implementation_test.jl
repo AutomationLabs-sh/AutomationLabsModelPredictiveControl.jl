@@ -276,7 +276,6 @@ end
 
 @testset "ResNet model linear modeler MPC test" begin
 
-
     #get the resnet model to design the mpc controler
     resnet_machine = machine("./models_saved/resnet_train_result.jls")
 

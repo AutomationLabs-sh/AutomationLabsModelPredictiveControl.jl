@@ -21,7 +21,8 @@ function _JuMP_model_definition( method::LinearProgramming,
                                 solver_selection::Union{    osqp_solver_def, 
                                                             scip_solver_def,
                                                             mosek_solver_def,
-                                                            highs_solver_def } )
+                                                            highs_solver_def, 
+                                                            ipopt_solver_def, } )
 
     model =  _selection_solver_JuMP_model(solver_selection)
 
@@ -41,7 +42,7 @@ end
 
 function _JuMP_model_definition( method::MixedIntegerLinearProgramming, 
                                 solver_selection::Union{mosek_solver_def, 
-                                                    scip_solver_def} )
+                                                        scip_solver_def} )
 
     model =  _selection_solver_JuMP_model(solver_selection)
 

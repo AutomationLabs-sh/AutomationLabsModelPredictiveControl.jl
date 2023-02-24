@@ -6,25 +6,13 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.  #
 ########################################################
 
-#NamedTuple default parameters definition
-const _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL = (
-    mpc_solver = "auto",
-    mpc_terminal_ingredient = "none",
-    mpc_Q = 100.0,
-    mpc_R = 0.1,
-    mpc_S = 0.0,
-    mpc_max_time = 30.0,
-)
-
 """
     proceed_controller
 A function for model predictive control and economic model predictive control.
 
 The following variables are mendatories:
-* `machine_mlj`: a machine from AutomationLabsIdentification
+* `system`: a mathematical systems from AutomationLabsSystems.
 * `mpc_controller_type`: a string for model predictive control or economic model predictive control. 
-* `mpc_programming_type`: a string for LMPC, LIMPC or NLMPC
-* `mpc_input_constraints`: a constraint.
 * `mpc_horizon`: a horizon for the predictive controller.
 * `mpc_sample_time`: a sample time for the predictive controller.
 * `mpc_state_reference`: state reference for mpc or linearization point for empc. 
@@ -32,10 +20,8 @@ The following variables are mendatories:
 * `kws` optional argument.
 """
 function proceed_controller(
-    machine_mlj,
+    system,
     mpc_controller_type::String,
-    mpc_programming_type::String,
-    mpc_input_constraint::Matrix,
     mpc_horizon::Int,
     mpc_sample_time::Int, 
     mpc_state_reference::Vector, 
@@ -47,22 +33,6 @@ function proceed_controller(
     dict_kws = Dict{Symbol,Any}(kws_)
     kws = get(dict_kws, :kws, kws_)
 
-    # Get the type of the model from the machine_mlj
-    model_mlj_type = _get_mlj_model_type(machine_mlj)
-
-    # System definition
-    system = _controller_system_design(
-            model_mlj_type,
-            machine_mlj,
-            mpc_input_constraint,
-            mpc_state_reference, 
-            mpc_input_reference;
-            kws
-    )
-
-    # Get default parameters or user parameters
-    mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
-
     # Evaluate if mpc controller is quadratic or economic
     if mpc_controller_type == "model_predictive_control"
 
@@ -71,9 +41,7 @@ function proceed_controller(
 
         # Design the model predictive control controller
         controller = _model_predictive_control_design(system, 
-                                      model_mlj_type,
                                       mpc_horizon, 
-                                      mpc_method_optimization,
                                       mpc_sample_time, 
                                       mpc_references;
                                       kws
@@ -84,6 +52,9 @@ function proceed_controller(
 
     # Evaluate if mpc controller is quadratic or economic
     if mpc_controller_type == "economic_model_predictive_control"
+
+        # Get default parameters or user parameters
+        mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
 
         # Set references 
         mpc_linearization_point = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
@@ -107,6 +78,16 @@ function proceed_controller(
     end
 end
 
+#NamedTuple default parameters definition
+const _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL = (
+    mpc_solver = "auto",
+    mpc_terminal_ingredient = "none",
+    mpc_Q = 100.0,
+    mpc_R = 0.1,
+    mpc_S = 0.0,
+    mpc_max_time = 30.0,
+)
+
 """
     _design_reference_mpc
 A function for references for model predictive control and linearization point for economic model predictive control.
@@ -118,23 +99,10 @@ The following variables are mendatories:
 """
 function _design_reference_mpc(state_reference::Vector, input_reference::Vector, horizon::Int)
 
-
     x = state_reference .* ones(size(state_reference,1), horizon + 1)
     u = input_reference .* ones(size(input_reference, 1), horizon)
 
     references = ReferencesStateInput(x, u)
 
     return references
-end
-
-
-#to do find a better way to get the AutomationLabsIdentification type
-function _get_mlj_model_type(machine_mlj::MLJ.Machine{MLJMultivariateStatsInterface.MultitargetLinearRegressor, true})
-
-    return  machine_mlj.model
-end
-
-function _get_mlj_model_type(machine_mlj)
-
-    return MLJ.fitted_params(MLJ.fitted_params(machine_mlj).machine).best_model.builder
 end

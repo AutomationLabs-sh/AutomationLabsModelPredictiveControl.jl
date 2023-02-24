@@ -81,13 +81,13 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     ### Fnn L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+
     C_fnn_linear = _model_predictive_control_design(
         QTP_sys_fnn,
-        type_fnn,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
     )
 
@@ -106,11 +106,11 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_fnn_nl = _model_predictive_control_design(
         QTP_sys_fnn,
-        type_fnn,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -129,12 +129,12 @@ import AutomationLabsModelPredictiveControl: _model_predictive_control_design
     solver = AutomationLabsModelPredictiveControl.scip_solver_def()
     C_fnn_milp = _model_predictive_control_design(
         QTP_sys_fnn,
-        type_fnn,
         horizon,
-        method,
         sample_time,
-        references,
-        solver = solver
+        references;
+        mpc_programming_type = "mixed_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -225,17 +225,18 @@ end
 
     ### ResNet L MPC ###
     solver = ModelPredictiveControl.HiGHS_solver_def()
+
     method = ModelPredictiveControl.LinearProgramming()
+
     C_resnet_linear = _model_predictive_control_design(
         QTP_sys_resnet,
-        type_resnet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
-
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
@@ -250,13 +251,15 @@ end
 
     ### ResNet N L MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_resnet_nl = _model_predictive_control_design(
         QTP_sys_resnet,
-        type_resnet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -274,14 +277,15 @@ end
     solver = AutomationLabsModelPredictiveControl.Mosek_solver_def()
 
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
+
     C_resnet_milp = _model_predictive_control_design(
         QTP_sys_resnet,
-        type_resnet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "mixed_linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -376,13 +380,15 @@ end
 
     ### densenet L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
     C_densenet_linear = _model_predictive_control_design(
         QTP_sys_densenet,
-        type_densenet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -400,11 +406,12 @@ end
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
     C_densenet_nl = _model_predictive_control_design(
         QTP_sys_densenet,
-        type_densenet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -424,12 +431,12 @@ end
 
     C_densenet_milp = _model_predictive_control_design(
         QTP_sys_densenet,
-        type_densenet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "mixed_linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -524,16 +531,16 @@ end
     ### polynet L MPC ###
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
     C_polynet_linear = _model_predictive_control_design(
         QTP_sys_polynet,
-        type_polynet,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
-
 
     initialization = [0.6, 0.6, 0.6, 0.6]
 
@@ -552,12 +559,13 @@ end
 
     C_polynet_nl = _model_predictive_control_design(
         QTP_sys_polynet,
-        type_polynet,
         horizon,
-        method,
         sample_time,
-        references
-            )
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
+    )
 
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -675,14 +683,15 @@ end
     ### icnn L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+
     C_icnn_linear = _model_predictive_control_design(
         QTP_sys_icnn,
-        type_icnn,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -698,13 +707,15 @@ end
 
     ### icnn N L MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_icnn_nl = _model_predictive_control_design(
         QTP_sys_icnn,
-        type_icnn,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -721,14 +732,15 @@ end
     ### icnn MILP MPC ###
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
     solver = AutomationLabsModelPredictiveControl.scip_solver_def()
+
     C_icnn_milp = _model_predictive_control_design(
         QTP_sys_icnn,
-        type_icnn,
         horizon,
-        method,
         sample_time,
-        references,
-        solver = solver
+        references;
+        mpc_programming_type = "mixed_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -816,14 +828,15 @@ end
     ### rbf L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+
     C_rbf_linear = _model_predictive_control_design(
         QTP_sys_rbf,
-        type_rbf,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -839,13 +852,15 @@ end
 
     ### rbf N L MPC ###
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
+
     C_rbf_nl = _model_predictive_control_design(
         QTP_sys_rbf,
-        type_rbf,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "non_linear", 
+        solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -927,14 +942,15 @@ end
     ### neuralnetODE_type1 L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+
     C_neuralnetODE_type1_linear = _model_predictive_control_design(
         QTP_sys_neuralnetODE_type1,
-        type_neuralnetODE_type1,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
+        mpc_programming_type = "linear", 
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]
@@ -1014,14 +1030,14 @@ end
     ### linear_regressor L MPC ###
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
     solver = AutomationLabsModelPredictiveControl.osqp_solver_def()
+
     C_linear_regressor_linear = _model_predictive_control_design(
         QTP_sys_linear_regressor,
-        type_linear_regressor,
         horizon,
-        method,
         sample_time,
-        references,
+        references;
         solver = solver,
+        mpc_terminal_ingredient = "none",
     )
 
     initialization = [0.6, 0.6, 0.6, 0.6]

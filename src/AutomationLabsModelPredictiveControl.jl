@@ -12,6 +12,7 @@ import Flux
 import ForwardDiff
 import HiGHS
 import AutomationLabsIdentification
+import AutomationLabsSystems
 import InvariantSets
 import Ipopt
 import JuMP
@@ -35,49 +36,47 @@ export update!
 export calculate!
 
 # include sub files
-include("subfunctions/types.jl")
-include("subfunctions/design_mpc.jl")
-include("subfunctions/design_empc.jl")
-include("subfunctions/solver_selection.jl")
-include("subfunctions/design_systems.jl")
+include("types/types.jl")
+include("sub/design_mpc.jl")
+include("sub/design_empc.jl")
+include("sub/solver_selection.jl")
 
 # modeler implementation of models
 # Fnn
-include("model_modeler_implementation/fnn/mpc_modeler_implementation_fnn.jl")
-include("model_modeler_implementation/fnn/empc_modeler_implementation_fnn.jl")
+include("sub/model_modeler_implementation/fnn/mpc_modeler_implementation_fnn.jl")
+include("sub/model_modeler_implementation/fnn/empc_modeler_implementation_fnn.jl")
 
 #icnn
-include("model_modeler_implementation/icnn/mpc_modeler_implementation_icnn.jl")
-include("model_modeler_implementation/icnn/empc_modeler_implementation_icnn.jl")
+include("sub/model_modeler_implementation/icnn/mpc_modeler_implementation_icnn.jl")
+include("sub/model_modeler_implementation/icnn/empc_modeler_implementation_icnn.jl")
 
 # resnet 
-include("model_modeler_implementation/resnet/mpc_modeler_implementation_resnet.jl")
-include("model_modeler_implementation/resnet/empc_modeler_implementation_resnet.jl")
+include("sub/model_modeler_implementation/resnet/mpc_modeler_implementation_resnet.jl")
+include("sub/model_modeler_implementation/resnet/empc_modeler_implementation_resnet.jl")
 
 # densenet
-include("model_modeler_implementation/densenet/mpc_modeler_implementation_densenet.jl")
-include("model_modeler_implementation/densenet/empc_modeler_implementation_densenet.jl")
+include("sub/model_modeler_implementation/densenet/mpc_modeler_implementation_densenet.jl")
+include("sub/model_modeler_implementation/densenet/empc_modeler_implementation_densenet.jl")
 
 # rbf
-include("model_modeler_implementation/rbf/mpc_modeler_implementation_rbf.jl")
-include("model_modeler_implementation/rbf/empc_modeler_implementation_rbf.jl")
+include("sub/model_modeler_implementation/rbf/mpc_modeler_implementation_rbf.jl")
+include("sub/model_modeler_implementation/rbf/empc_modeler_implementation_rbf.jl")
 
 # polynet
-include("model_modeler_implementation/polynet/mpc_modeler_implementation_polynet.jl")
-include("model_modeler_implementation/polynet/empc_modeler_implementation_polynet.jl")
+include("sub/model_modeler_implementation/polynet/mpc_modeler_implementation_polynet.jl")
+include("sub/model_modeler_implementation/polynet/empc_modeler_implementation_polynet.jl")
 
 # neuralnetode type 1
-include("model_modeler_implementation/neuralnetode_type1/mpc_modeler_implementation_neuralnetode_type1.jl")
-include("model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl")
+include("sub/model_modeler_implementation/neuralnetode_type1/mpc_modeler_implementation_neuralnetode_type1.jl")
+include("sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl")
 
 # linear model 
-include("model_modeler_implementation/linear/mpc_modeler_implementation_linear.jl")
-include("model_modeler_implementation/linear/empc_modeler_implementation_linear.jl")
-
+include("sub/model_modeler_implementation/linear/mpc_modeler_implementation_linear.jl")
+include("sub/model_modeler_implementation/linear/empc_modeler_implementation_linear.jl")
 
 # include main files
-include("mainfunctions/main_mpc.jl")
-include("mainfunctions/computation_mpc.jl")
-include("mainfunctions/computation_empc.jl")
+include("main/main_mpc.jl")
+include("main/computation_mpc.jl")
+include("main/computation_empc.jl")
 
 end
