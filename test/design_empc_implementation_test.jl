@@ -96,7 +96,7 @@ import AutomationLabsModelPredictiveControl: _economic_model_predictive_control_
     @test JuMP.objective_function_type(C_fnn_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_fnn_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_fnn_linear.tuning.horizon == horizon
     @test C_fnn_linear.tuning.sample_time == 5.0
@@ -180,7 +180,7 @@ end
     @test JuMP.objective_function_type(C_fnn_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_fnn_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_fnn_linear.tuning.horizon == horizon
     @test C_fnn_linear.tuning.sample_time == 5.0
@@ -350,7 +350,7 @@ end
     @test JuMP.objective_function_type(C_icnn_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_icnn_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_icnn_linear.tuning.horizon == horizon
     @test C_icnn_linear.tuning.sample_time == 5.0
@@ -434,7 +434,7 @@ end
     @test JuMP.objective_function_type(C_icnn_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_icnn_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_icnn_linear.tuning.horizon == horizon
     @test C_icnn_linear.tuning.sample_time == 5.0
@@ -604,13 +604,14 @@ end
     @test JuMP.objective_function_type(C_resnet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_resnet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_resnet_linear.tuning.horizon == horizon
     @test C_resnet_linear.tuning.sample_time == 5.0
     @test C_resnet_linear.tuning.max_time == 30 #to modify
     @test size(C_resnet_linear.initialization) == (QTP_sys_resnet.statedim,)
-    @test size(C_resnet_linear.computation_results.x) == (QTP_sys_resnet.statedim, horizon + 1)
+    @test size(C_resnet_linear.computation_results.x) ==
+          (QTP_sys_resnet.statedim, horizon + 1)
     @test size(C_resnet_linear.computation_results.u) == (QTP_sys_resnet.inputdim, horizon)
     ### end evaluate resnet L MPC implementation ###
 
@@ -688,13 +689,14 @@ end
     @test JuMP.objective_function_type(C_resnet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_resnet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_resnet_linear.tuning.horizon == horizon
     @test C_resnet_linear.tuning.sample_time == 5.0
     @test C_resnet_linear.tuning.max_time == 30 #to modify
     @test size(C_resnet_linear.initialization) == (QTP_sys_resnet.statedim,)
-    @test size(C_resnet_linear.computation_results.x) == (QTP_sys_resnet.statedim, horizon + 1)
+    @test size(C_resnet_linear.computation_results.x) ==
+          (QTP_sys_resnet.statedim, horizon + 1)
     @test size(C_resnet_linear.computation_results.u) == (QTP_sys_resnet.inputdim, horizon)
     ### end evaluate resnet L MPC implementation ###
 
@@ -781,7 +783,8 @@ end
     @test C_resnet_linear.tuning.sample_time == 5.0
     @test C_resnet_linear.tuning.max_time == 30 #to modify
     @test size(C_resnet_linear.initialization) == (QTP_sys_resnet.statedim,)
-    @test size(C_resnet_linear.computation_results.x) == (QTP_sys_resnet.statedim, horizon + 1)
+    @test size(C_resnet_linear.computation_results.x) ==
+          (QTP_sys_resnet.statedim, horizon + 1)
     @test size(C_resnet_linear.computation_results.u) == (QTP_sys_resnet.inputdim, horizon)
     ### end evaluate resnet L MPC implementation ###
 
@@ -810,7 +813,8 @@ end
 
     #extract best model from the all trained models
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
-    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    f_densenet =
+        fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
     type_densenet = mlj_densenet.builder
 
     #system definition with MAthematical systems
@@ -859,14 +863,16 @@ end
     @test JuMP.objective_function_type(C_densenet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_densenet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_densenet_linear.tuning.horizon == horizon
     @test C_densenet_linear.tuning.sample_time == 5.0
     @test C_densenet_linear.tuning.max_time == 30 #to modify
     @test size(C_densenet_linear.initialization) == (QTP_sys_densenet.statedim,)
-    @test size(C_densenet_linear.computation_results.x) == (QTP_sys_densenet.statedim, horizon + 1)
-    @test size(C_densenet_linear.computation_results.u) == (QTP_sys_densenet.inputdim, horizon)
+    @test size(C_densenet_linear.computation_results.x) ==
+          (QTP_sys_densenet.statedim, horizon + 1)
+    @test size(C_densenet_linear.computation_results.u) ==
+          (QTP_sys_densenet.inputdim, horizon)
     ### end evaluate densenet L MPC implementation ###
 
 end
@@ -894,7 +900,8 @@ end
 
     #extract best model from the all trained models
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
-    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    f_densenet =
+        fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
     type_densenet = mlj_densenet.builder
 
     #system definition with MAthematical systems
@@ -943,14 +950,16 @@ end
     @test JuMP.objective_function_type(C_densenet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_densenet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_densenet_linear.tuning.horizon == horizon
     @test C_densenet_linear.tuning.sample_time == 5.0
     @test C_densenet_linear.tuning.max_time == 30 #to modify
     @test size(C_densenet_linear.initialization) == (QTP_sys_densenet.statedim,)
-    @test size(C_densenet_linear.computation_results.x) == (QTP_sys_densenet.statedim, horizon + 1)
-    @test size(C_densenet_linear.computation_results.u) == (QTP_sys_densenet.inputdim, horizon)
+    @test size(C_densenet_linear.computation_results.x) ==
+          (QTP_sys_densenet.statedim, horizon + 1)
+    @test size(C_densenet_linear.computation_results.u) ==
+          (QTP_sys_densenet.inputdim, horizon)
     ### end evaluate densenet L MPC implementation ###
 
 end
@@ -978,7 +987,8 @@ end
 
     #extract best model from the all trained models
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
-    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    f_densenet =
+        fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
     type_densenet = mlj_densenet.builder
 
     #system definition with MAthematical systems
@@ -1035,8 +1045,10 @@ end
     @test C_densenet_linear.tuning.sample_time == 5.0
     @test C_densenet_linear.tuning.max_time == 30 #to modify
     @test size(C_densenet_linear.initialization) == (QTP_sys_densenet.statedim,)
-    @test size(C_densenet_linear.computation_results.x) == (QTP_sys_densenet.statedim, horizon + 1)
-    @test size(C_densenet_linear.computation_results.u) == (QTP_sys_densenet.inputdim, horizon)
+    @test size(C_densenet_linear.computation_results.x) ==
+          (QTP_sys_densenet.statedim, horizon + 1)
+    @test size(C_densenet_linear.computation_results.u) ==
+          (QTP_sys_densenet.inputdim, horizon)
     ### end evaluate densenet L MPC implementation ###
 
 end
@@ -1114,7 +1126,7 @@ end
     @test JuMP.objective_function_type(C_rbf_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_rbf_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_rbf_linear.tuning.horizon == horizon
     @test C_rbf_linear.tuning.sample_time == 5.0
@@ -1198,7 +1210,7 @@ end
     @test JuMP.objective_function_type(C_rbf_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_rbf_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_rbf_linear.tuning.horizon == horizon
     @test C_rbf_linear.tuning.sample_time == 5.0
@@ -1283,14 +1295,16 @@ end
     @test JuMP.objective_function_type(C_polynet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_polynet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_polynet_linear.tuning.horizon == horizon
     @test C_polynet_linear.tuning.sample_time == 5.0
     @test C_polynet_linear.tuning.max_time == 30 #to modify
     @test size(C_polynet_linear.initialization) == (QTP_sys_polynet.statedim,)
-    @test size(C_polynet_linear.computation_results.x) == (QTP_sys_polynet.statedim, horizon + 1)
-    @test size(C_polynet_linear.computation_results.u) == (QTP_sys_polynet.inputdim, horizon)
+    @test size(C_polynet_linear.computation_results.x) ==
+          (QTP_sys_polynet.statedim, horizon + 1)
+    @test size(C_polynet_linear.computation_results.u) ==
+          (QTP_sys_polynet.inputdim, horizon)
     ### end evaluate polynet L MPC implementation ###
 
 end
@@ -1367,14 +1381,16 @@ end
     @test JuMP.objective_function_type(C_polynet_linear.tuning.modeler) == JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_polynet_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_polynet_linear.tuning.horizon == horizon
     @test C_polynet_linear.tuning.sample_time == 5.0
     @test C_polynet_linear.tuning.max_time == 30 #to modify
     @test size(C_polynet_linear.initialization) == (QTP_sys_polynet.statedim,)
-    @test size(C_polynet_linear.computation_results.x) == (QTP_sys_polynet.statedim, horizon + 1)
-    @test size(C_polynet_linear.computation_results.u) == (QTP_sys_polynet.inputdim, horizon)
+    @test size(C_polynet_linear.computation_results.x) ==
+          (QTP_sys_polynet.statedim, horizon + 1)
+    @test size(C_polynet_linear.computation_results.u) ==
+          (QTP_sys_polynet.inputdim, horizon)
     ### end evaluate polynet L MPC implementation ###
 
 end
@@ -1486,26 +1502,22 @@ end
     )
     u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
 
-  #get the linear_regressor model to design the mpc controler
-  linear_regressor_machine = machine("./models_saved/linear_regressor_train_result.jls")
+    #get the linear_regressor model to design the mpc controler
+    linear_regressor_machine = machine("./models_saved/linear_regressor_train_result.jls")
 
-  #extract best model from the all trained models
-  fitted_params(linear_regressor_machine)
+    #extract best model from the all trained models
+    fitted_params(linear_regressor_machine)
 
-  AB_t = fitted_params(linear_regressor_machine).coefficients
-  AB = copy(AB_t')
-  A = AB[:, 1:4]
-  B = AB[:, 5: end]
+    AB_t = fitted_params(linear_regressor_machine).coefficients
+    AB = copy(AB_t')
+    A = AB[:, 1:4]
+    B = AB[:, 5:end]
 
-  type_linear_regressor = linear_regressor_machine.model
+    type_linear_regressor = linear_regressor_machine.model
 
-  #system definition with Mathematical systems
-  QTP_sys_linear_regressor = MathematicalSystems.ConstrainedLinearControlDiscreteSystem(
-      A, 
-      B, 
-      x_cons,
-      u_cons,
-  )
+    #system definition with Mathematical systems
+    QTP_sys_linear_regressor =
+        MathematicalSystems.ConstrainedLinearControlDiscreteSystem(A, B, x_cons, u_cons)
 
     #MPC design parameters
     horizon = 15
@@ -1541,7 +1553,8 @@ end
     @test size(JuMP.object_dictionary(C_linear_regressor_linear.tuning.modeler)[:x]) ==
           (size(QTP_sys_linear_regressor.A, 1), horizon + 1)
     @test JuMP.objective_function(C_linear_regressor_linear.tuning.modeler) != 0 #to improve
-    @test JuMP.objective_function_type(C_linear_regressor_linear.tuning.modeler) == JuMP.QuadExpr
+    @test JuMP.objective_function_type(C_linear_regressor_linear.tuning.modeler) ==
+          JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_linear_regressor_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
         (AffExpr, MathOptInterface.LessThan{Float64}),
@@ -1549,9 +1562,12 @@ end
     @test C_linear_regressor_linear.tuning.horizon == horizon
     @test C_linear_regressor_linear.tuning.sample_time == 5.0
     @test C_linear_regressor_linear.tuning.max_time == 30 #to modify
-    @test size(C_linear_regressor_linear.initialization) == (size(QTP_sys_linear_regressor.A, 1),)
-    @test size(C_linear_regressor_linear.computation_results.x) == (size(QTP_sys_linear_regressor.A, 1), horizon + 1)
-    @test size(C_linear_regressor_linear.computation_results.u) == (size(QTP_sys_linear_regressor.B, 2), horizon)
+    @test size(C_linear_regressor_linear.initialization) ==
+          (size(QTP_sys_linear_regressor.A, 1),)
+    @test size(C_linear_regressor_linear.computation_results.x) ==
+          (size(QTP_sys_linear_regressor.A, 1), horizon + 1)
+    @test size(C_linear_regressor_linear.computation_results.u) ==
+          (size(QTP_sys_linear_regressor.B, 2), horizon)
     ### end evaluate linear_regressor L MPC implementation ###
 
 end
@@ -1577,21 +1593,25 @@ end
     u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
 
     #get the resnet model to design the mpc controler
-    neuralnetODE_type1_machine = machine("./models_saved/neuralnetODE_type1_train_result.jls")
+    neuralnetODE_type1_machine =
+        machine("./models_saved/neuralnetODE_type1_train_result.jls")
 
     #extract best model from the all trained models
-    mlj_neuralnetODE_type1 = fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
-    f_neuralnetODE_type1 = fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
     type_neuralnetODE_type1 = mlj_neuralnetODE_type1.builder
 
     #system definition with MAthematical systems
-    QTP_sys_neuralnetODE_type1 = MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
-        f_neuralnetODE_type1,
-        4,
-        2,
-        x_cons,
-        u_cons,
-    )
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
 
     #MPC design parameters
     horizon = 15
@@ -1627,17 +1647,21 @@ end
     @test size(JuMP.object_dictionary(C_neuralnetODE_type1_linear.tuning.modeler)[:x]) ==
           (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
     @test JuMP.objective_function(C_neuralnetODE_type1_linear.tuning.modeler) != 0 #to improve
-    @test JuMP.objective_function_type(C_neuralnetODE_type1_linear.tuning.modeler) == JuMP.QuadExpr
+    @test JuMP.objective_function_type(C_neuralnetODE_type1_linear.tuning.modeler) ==
+          JuMP.QuadExpr
     @test JuMP.list_of_constraint_types(C_neuralnetODE_type1_linear.tuning.modeler) == [
         (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),      
+        (AffExpr, MathOptInterface.LessThan{Float64}),
     ]
     @test C_neuralnetODE_type1_linear.tuning.horizon == horizon
     @test C_neuralnetODE_type1_linear.tuning.sample_time == 5.0
     @test C_neuralnetODE_type1_linear.tuning.max_time == 30 #to modify
-    @test size(C_neuralnetODE_type1_linear.initialization) == (QTP_sys_neuralnetODE_type1.statedim,)
-    @test size(C_neuralnetODE_type1_linear.computation_results.x) == (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
-    @test size(C_neuralnetODE_type1_linear.computation_results.u) == (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(C_neuralnetODE_type1_linear.initialization) ==
+          (QTP_sys_neuralnetODE_type1.statedim,)
+    @test size(C_neuralnetODE_type1_linear.computation_results.x) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(C_neuralnetODE_type1_linear.computation_results.u) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
     ### end evaluate neuralnetODE_type1 L MPC implementation ###
 
 end

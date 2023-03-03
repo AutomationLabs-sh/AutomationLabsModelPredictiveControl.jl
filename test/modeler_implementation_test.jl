@@ -24,7 +24,8 @@ using MathOptInterface
 using AutomationLabsModelPredictiveControl
 
 import AutomationLabsModelPredictiveControl: auto_solver_def
-import AutomationLabsModelPredictiveControl: _model_predictive_control_modeler_implementation
+import AutomationLabsModelPredictiveControl:
+    _model_predictive_control_modeler_implementation
 import AutomationLabsModelPredictiveControl: _JuMP_model_definition
 
 @testset "Fnn model linear modeler MPC test" begin
@@ -1267,8 +1268,10 @@ end
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) == (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) == (QTP_sys_polynet.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_polynet.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_polynet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
           (QTP_sys_polynet.statedim, horizon + 1)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
@@ -1349,8 +1352,10 @@ end
     @test length(JuMP.object_dictionary(modeler_mpc)) == 8
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) == (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) == (QTP_sys_polynet.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_polynet.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_polynet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
           (QTP_sys_polynet.statedim, horizon + 1)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
@@ -1486,17 +1491,13 @@ end
     AB_t = fitted_params(linear_regressor_machine).coefficients
     AB = copy(AB_t')
     A = AB[:, 1:4]
-    B = AB[:, 5: end]
+    B = AB[:, 5:end]
 
     type_linear_regressor = linear_regressor_machine.model
 
     #system definition with Mathematical systems
-    QTP_sys_linear_regressor = MathematicalSystems.ConstrainedLinearControlDiscreteSystem(
-        A, 
-        B, 
-        x_cons,
-        u_cons,
-    )
+    QTP_sys_linear_regressor =
+        MathematicalSystems.ConstrainedLinearControlDiscreteSystem(A, B, x_cons, u_cons)
 
     #MPC design parameters
     horizon = 15
@@ -1525,8 +1526,10 @@ end
     @test length(JuMP.object_dictionary(modeler_mpc)) == 6
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (size(QTP_sys_linear_regressor.B, 2), horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) == (size(QTP_sys_linear_regressor.B, 2), horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) == (size(QTP_sys_linear_regressor.B, 2), horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (size(QTP_sys_linear_regressor.B, 2), horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (size(QTP_sys_linear_regressor.B, 2), horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
           (size(QTP_sys_linear_regressor.A, 1), horizon + 1)
     @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
@@ -1544,6 +1547,143 @@ end
 end
 
 @testset "neuralnetODE_type1 model linear modeler MPC test" begin
+
+    #get the neuralnetODE_type1 model to design the mpc controler
+    neuralnetODE_type1_machine =
+        machine("./models_saved/neuralnetODE_type1_train_result.jls")
+
+    #extract best model from the all trained models
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
+    model_neuralnetODE_type1 = mlj_neuralnetODE_type1.builder
+
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
+    #system definition with MAthematical systems
+    hmin = 0.2
+    h1max = 1.36
+    h2max = 1.36
+    h3max = 1.30
+    h4max = 1.30
+    qmin = 0
+    qamax = 4
+    qbmax = 3.26
+
+    #Constraint definition:
+    x_cons = LazySets.Hyperrectangle(
+        low = [hmin, hmin, hmin, hmin],
+        high = [h1max, h2max, h3max, h4max],
+    )
+    u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
+
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
+
+    #MPC design parameters
+    horizon = 15
+    sample_time = 5
+    terminal_ingredients = false
+    max_time = 5
+    x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
+    u = [1.2, 1.2] * ones(1, horizon)
+
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
+
+    solver = auto_solver_def()
+
+    modeler_mpc = _model_predictive_control_modeler_implementation(
+        method,
+        model_neuralnetODE_type1,
+        QTP_sys_neuralnetODE_type1,
+        horizon,
+        references,
+        solver,
+    )
+
+    ### start evaluate neuralnetODE_type1 L MPC implementation ###
+    @test typeof(modeler_mpc) == JuMP.Model
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 6
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test JuMP.objective_function(modeler_mpc) == 0
+    @test JuMP.objective_function_type(modeler_mpc) == JuMP.AffExpr
+    @test JuMP.list_of_constraint_types(modeler_mpc) == [
+        (AffExpr, MathOptInterface.EqualTo{Float64}),
+        (AffExpr, MathOptInterface.LessThan{Float64}),
+        (VariableRef, MathOptInterface.EqualTo{Float64}),
+    ]
+
+end
+
+
+#=
+
+@testset "Non linear linear MPC test" begin
+
+    # QTP 
+
+    function QTP(du, u, p, t)
+        #no trainable parameters
+        #constant parameters
+        S = 0.06
+        gamma_a = 0.3
+        gamma_b = 0.4
+        g = 9.81
+
+        a1 = 1.34e-4
+        a2 = 1.51e-4
+        a3 = 9.27e-5
+        a4 = 8.82e-5
+
+        #states 
+        x1 = u[1]
+        x2 = u[2]
+        x3 = u[3]
+        x4 = u[4]
+        qa = u[5]
+        qb = u[6]
+
+        du[1] =
+            -a1 / S * sqrt(2 * g * x1) +
+            a3 / S * sqrt(2 * g * x3) +
+            gamma_a / (S * 3600) * qa
+        du[2] =
+            -a2 / S * sqrt(2 * g * x2) +
+            a4 / S * sqrt(2 * g * x4) +
+            gamma_b / (S * 3600) * qb
+        du[3] = -a3 / S * sqrt(2 * g * x3) + (1 - gamma_b) / (S * 3600) * qb
+        du[4] = -a4 / S * sqrt(2 * g * x4) + (1 - gamma_a) / (S * 3600) * qa
+    end
+
+    u0 = 
+
+    tspan = 
+
+    init_t_p = [1.1e-4, 1.2e-4, 9e-5, 9e-5]
+    #init_t_p [1.34e-4, 1.51e-4, 9.27e-5, 8.82e-5]
+    nbr_states = 4
+    nbr_inputs = 2
+    sample_time = 5.0
+    maximum_time = Dates.Minute(15)
 
     #get the neuralnetODE_type1 model to design the mpc controler
     neuralnetODE_type1_machine = machine("./models_saved/neuralnetODE_type1_train_result.jls")
@@ -1573,7 +1713,7 @@ end
     u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
 
     QTP_sys_neuralnetODE_type1 = MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
-        f_neuralnetODE_type1,
+        f,
         4,
         2,
         x_cons,
@@ -1625,5 +1765,5 @@ end
 
 end
 
-
+=#
 end

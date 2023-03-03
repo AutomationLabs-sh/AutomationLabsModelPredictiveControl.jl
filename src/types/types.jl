@@ -44,9 +44,9 @@ State, input and input rate weighting coefficient for the cost function.
 * `S`: input rate weight coefficient.
 """
 mutable struct WeightsCoefficient <: AbstractWeights
-	Q::Matrix 
-    R::Matrix 
-    S::Matrix 
+    Q::Matrix
+    R::Matrix
+    S::Matrix
 end
 
 ### terminal ingredients ###
@@ -112,8 +112,8 @@ Model predictive control tuning implementation according to parameters and refer
 * `max_time`: model predictive control maximum time computation.
 """
 struct ModelPredictiveControlTuning <: AbstractController
-    modeler#::JuMP
-	reference::ReferencesStateInput
+    modeler::Any#::JuMP
+    reference::ReferencesStateInput
     horizon::Int
     weights::WeightsCoefficient
     terminal_ingredient::TerminalIngredient
@@ -149,7 +149,7 @@ Model predictive control main struct parameters. The controller as all the neces
 * `inputs_command`: model predictive control input after computation, which are sent to dynamical system.
 """
 mutable struct ModelPredictiveControlController <: AbstractController
-	system#::MathematicalSystems
+    system::Any#::MathematicalSystems
     tuning::ModelPredictiveControlTuning
     initialization::Vector{Float64}
     computation_results::ModelPredictiveControlResults

@@ -6,36 +6,6 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.  #
 ########################################################
 
-# model predictive control computation (the controller)
-"""
-    update_and_compute!(C::ModelPredictiveControlController, initialization::Vector; references::ReferencesStateInput)
-Model predictive control main computation function. The controller is updated with the new initialization and references (if needed)
-and then the controller is computed and new inputs command are displayed.
-
-** Required fields **
-* `C`: the model predictive control controller.
-* `initialization`: initialization of the model predictive control befre computation (also now as the state measures).
-
-** Optional fields **
-* `references`: new states and inputs references is needed.
-"""
-function update_and_compute!(C::ModelPredictiveControlController, initialization::Vector; references::ReferencesStateInput)
-
-    if C.References != references 
-        #recompute terminal ingredient, update modeler, intialization, references
-        UpdateController!(C)
-
-    else
-        #only initialization is updated
-        update_initialization!(C, initialization)
-   
-    end
-
-    #Compute MPC
-    calculate!(C)
-
-end
-
 """
     update_initialization!(C::ModelPredictiveControlController, initialization::Vector)
 Update initialization (also known as state measure) of Model predictive control controller.
@@ -50,14 +20,78 @@ function update_initialization!(C::ModelPredictiveControlController, initializat
     C.initialization = initialization
 
     #force within the modeller
-    x           = C.tuning.modeler[:x]
+    x = C.tuning.modeler[:x]
     #force within JuMP
-    for i in 1 : size(x, 1)
-        JuMP.fix(x[i,1], initialization[i,1]; force = true)
+    for i = 1:size(x, 1)
+        JuMP.fix(x[i, 1], initialization[i, 1]; force = true)
     end
-    
+
 end
 
+"""
+    calculate!(C::ModelPredictiveControlController)
+Model predictive control computation function. The controller is computed and optimization results values are written on mutable struct controller.
+
+** Required fields **
+* `C`: the model predictive control controller.
+"""
+function calculate!(C::ModelPredictiveControlController)
+
+    #optimisation is done here
+    JuMP.optimize!(C.tuning.modeler)
+
+    #variables are extracted from MyModel_MPC
+    u = C.tuning.modeler[:u]
+    x = C.tuning.modeler[:x]
+    e_x = C.tuning.modeler[:e_x]
+    e_u = C.tuning.modeler[:e_u]
+
+    #get optimisation variables
+    C.computation_results.u[:, :] = JuMP.value.(u[:, :])
+    C.computation_results.e_u[:, :] = JuMP.value.(e_u[:, :])
+    C.computation_results.x[:, :] = JuMP.value.(x[:, :])
+    C.computation_results.e_x[:, :] = JuMP.value.(e_x[:, :])
+
+end
+
+
+#=
+# model predictive control computation (the controller)
+"""
+    update_and_compute!(C::ModelPredictiveControlController, initialization::Vector; references::ReferencesStateInput)
+Model predictive control main computation function. The controller is updated with the new initialization and references (if needed)
+and then the controller is computed and new inputs command are displayed.
+
+** Required fields **
+* `C`: the model predictive control controller.
+* `initialization`: initialization of the model predictive control befre computation (also now as the state measures).
+
+** Optional fields **
+* `references`: new states and inputs references is needed.
+"""
+function update_and_compute!(
+    C::ModelPredictiveControlController,
+    initialization::Vector;
+    references::ReferencesStateInput,
+)
+
+    if C.References != references
+        #recompute terminal ingredient, update modeler, intialization, references
+        UpdateController!(C)
+
+    else
+        #only initialization is updated
+        update_initialization!(C, initialization)
+
+    end
+
+    #Compute MPC
+    calculate!(C)
+
+end
+=#
+
+#=
 """
     update!(C::ModelPredictiveControlController, initialization::Vector, references::ReferencesStateInput)
 Model predictive control main computation function. The controller is updated with the new initialization and references (if needed)
@@ -70,8 +104,12 @@ and then the controller is computed and new inputs command are displayed.
 ** Optional fields **
 * `references`: new states and inputs references is needed.
 """
-function update!(C::ModelPredictiveControlController, initialization::Vector, references::ReferencesStateInput)
-    
+function update!(
+    C::ModelPredictiveControlController,
+    initialization::Vector,
+    references::ReferencesStateInput,
+)
+
     #get the modeler
     model_mpc = C.tuning.modeler
 
@@ -85,12 +123,12 @@ function update!(C::ModelPredictiveControlController, initialization::Vector, re
     #decision vectors are extracted from MyModel_MPC
     x_reference = model_mpc[:x_reference]
     u_reference = model_mpc[:u_reference]
-    x           = model_mpc[:x]
-    u           = model_mpc[:u]
+    x = model_mpc[:x]
+    u = model_mpc[:u]
 
     #First vector size are defined
-    SizeVectorX                        = size(x)
-    SizeVectorU                        = size(u)
+    SizeVectorX = size(x)
+    SizeVectorU = size(u)
 
     #number of inputs and states and disturbance are extracted
     NumberOfState = SizeVectorX[1]
@@ -99,15 +137,15 @@ function update!(C::ModelPredictiveControlController, initialization::Vector, re
 
     ### Update references ###
     #X reference is set
-    for i in 1 : Horizon + 1
-        for j in 1 : NumberOfState
-            JuMP.fix(x_reference[j,i], x_reference_update[j,i]; force = true)
+    for i = 1:Horizon+1
+        for j = 1:NumberOfState
+            JuMP.fix(x_reference[j, i], x_reference_update[j, i]; force = true)
         end
     end
     #U reference is set
-    for i in 1 : Horizon
-        for j in 1 : NumberOfInputControl
-            JuMP.fix(u_reference[j,i], u_reference_update[j,i]; force = true)
+    for i = 1:Horizon
+        for j = 1:NumberOfInputControl
+            JuMP.fix(u_reference[j, i], u_reference_update[j, i]; force = true)
         end
     end
 
@@ -125,41 +163,61 @@ function update!(C::ModelPredictiveControlController, initialization::Vector, re
         A_sys, B_sys = f_linearization(system.f, references)
 
         #Calculate P matrix with ControlSystems and LQR
-        P =  ControlSystems.are(Discrete, A_sys, B_sys, weights.Q, weights.R)
+        P = ControlSystems.are(Discrete, A_sys, B_sys, weights.Q, weights.R)
 
         #Calculate Xf
-        A = A_sys - B_sys*K1
+        A = A_sys - B_sys * K1
 
-    #InvariantSets.jl
-    # """
-#     THEORY:
-#   Invariance: Region in which an autonomous system
-#   satisifies the constraints for all time.
-#
-#   Control Invariance: Region in which there exists a controller
-#   so that the system satisfies the constraints for all time.
-#
-#   A set 𝒪 is positive invariant if and only if 𝒪 ⊆ pre(𝒪)!
-#   """
+        #InvariantSets.jl
+        # """
+        #     THEORY:
+        #   Invariance: Region in which an autonomous system
+        #   satisifies the constraints for all time.
+        #
+        #   Control Invariance: Region in which there exists a controller
+        #   so that the system satisfies the constraints for all time.
+        #
+        #   A set 𝒪 is positive invariant if and only if 𝒪 ⊆ pre(𝒪)!
+        #   """
 
-    #Set new cost function with terminal cost P
-    if weights.R != 0 && weights.S != 0
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] + e_u[:,i]' * weights.R * e_u[:,i] + d_u[:,i]' * weights.S * d_[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i] )
-    
-    elseif weights.R != 0
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] + e_u[:,i]' * weights.R * e_u[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i])
-    
-    else
-        JuMP.@objective(model_mpc, Min, sum(e_x[:,i]' * weights.Q * e_x[:,i] for i in 1:Horizon) + e_x[:,i]' * P * e_x[:,i])
+        #Set new cost function with terminal cost P
+        if weights.R != 0 && weights.S != 0
+            JuMP.@objective(
+                model_mpc,
+                Min,
+                sum(
+                    e_x[:, i]' * weights.Q * e_x[:, i] +
+                    e_u[:, i]' * weights.R * e_u[:, i] +
+                    d_u[:, i]' * weights.S * d_[:, i] for i = 1:Horizon
+                ) + e_x[:, i]' * P * e_x[:, i]
+            )
 
-    end
+        elseif weights.R != 0
+            JuMP.@objective(
+                model_mpc,
+                Min,
+                sum(
+                    e_x[:, i]' * weights.Q * e_x[:, i] + e_u[:, i]' * weights.R * e_u[:, i]
+                    for i = 1:Horizon
+                ) + e_x[:, i]' * P * e_x[:, i]
+            )
 
-    #Add terminal constraint
-    x = model_mpc[:x]
-    for i in 1 : nbr_states
-        JuMP.@constraint(model_mpc, (x_ter[i,1]  <= x[i,end]  <= x_ter[i,2] ))
-    end
-    
+        else
+            JuMP.@objective(
+                model_mpc,
+                Min,
+                sum(e_x[:, i]' * weights.Q * e_x[:, i] for i = 1:Horizon) +
+                e_x[:, i]' * P * e_x[:, i]
+            )
+
+        end
+
+        #Add terminal constraint
+        x = model_mpc[:x]
+        for i = 1:nbr_states
+            JuMP.@constraint(model_mpc, (x_ter[i, 1] <= x[i, end] <= x_ter[i, 2]))
+        end
+
         #const TerminalIngredients = TerminalIngredients2(true, P, Xf)
         TerminalIngredients = TerminalIngredients2(true, P, Xf)
 
@@ -167,13 +225,13 @@ function update!(C::ModelPredictiveControlController, initialization::Vector, re
 
     else
         #no terminal constraints is choosen
-            
+
         #Linearization to get A and B at references
         A_sys, B_sys = f_linearization(system.f, references)
 
         #Calculate P matrix with ControlSystems and LQR
-        P =  ControlSystems.are(Discrete, A_sys, B_sys, weights.Q, weights.R)
-        
+        P = ControlSystems.are(Discrete, A_sys, B_sys, weights.Q, weights.R)
+
         #set the struct from the package model predictive control
         #const TerminalIngredients = TerminalIngredients1(false::Bool, P)
         TerminalIngredients = TerminalIngredients1(false::Bool, P)
@@ -190,47 +248,38 @@ function update!(C::ModelPredictiveControlController, initialization::Vector, re
 
     ### update the cost function ###
     if C.tuning.weights.R != 0 && C.tuning.weights.S != 0
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
-             sum(e_x[:,i]' * C.tuning.weights.Q * e_x[:,i] + 
-                e_u[:,i]' * C.tuning.weights.R * e_u[:,i] for i in 1:horizon) +
-            sum(delta_u[:,i]' * C.tuning.weights.S * delta_u[:,i] for i in 1: horizon-1))
-    
+        JuMP.@objective(
+            model_mpc,
+            Min,
+            e_x[:, end]' * terminal_ingredients.P * e_x[:, end] +
+            sum(
+                e_x[:, i]' * C.tuning.weights.Q * e_x[:, i] +
+                e_u[:, i]' * C.tuning.weights.R * e_u[:, i] for i = 1:horizon
+            ) +
+            sum(delta_u[:, i]' * C.tuning.weights.S * delta_u[:, i] for i = 1:horizon-1)
+        )
+
     elseif C.tuning.weights.R != 0
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
-            sum(e_x[:,i]' * C.tuning.weights.Q * e_x[:,i] +
-                e_u[:,i]' * C.tuning.weights.R * e_u[:,i] for i in 1:horizon))
-    
+        JuMP.@objective(
+            model_mpc,
+            Min,
+            e_x[:, end]' * terminal_ingredients.P * e_x[:, end] + sum(
+                e_x[:, i]' * C.tuning.weights.Q * e_x[:, i] +
+                e_u[:, i]' * C.tuning.weights.R * e_u[:, i] for i = 1:horizon
+            )
+        )
+
     else
-        JuMP.@objective(model_mpc, Min, e_x[:,end]' * terminal_ingredients.P * e_x[:,end] +
-            sum(e_x[:,i]' * C.tuning.weights.Q * e_x[:,i] for i in 1:horizon))
+        JuMP.@objective(
+            model_mpc,
+            Min,
+            e_x[:, end]' * terminal_ingredients.P * e_x[:, end] +
+            sum(e_x[:, i]' * C.tuning.weights.Q * e_x[:, i] for i = 1:horizon)
+        )
     end
     ### end update cost function ###
-    
+
 
 end
+=#
 
-"""
-    calculate!(C::ModelPredictiveControlController)
-Model predictive control computation function. The controller is computed and optimization results values are written on mutable struct controller.
-
-** Required fields **
-* `C`: the model predictive control controller.
-"""
-function calculate!(C::ModelPredictiveControlController)
-    
-        #optimisation is done here
-        JuMP.optimize!(C.tuning.modeler);
-
-        #variables are extracted from MyModel_MPC
-        u   = C.tuning.modeler[:u];
-        x   = C.tuning.modeler[:x];
-        e_x = C.tuning.modeler[:e_x];
-        e_u = C.tuning.modeler[:e_u];
-
-        #get optimisation variables
-        C.computation_results.u[:, :]    = JuMP.value.(u[:, :]);
-        C.computation_results.e_u[:, :]  = JuMP.value.(e_u[:, :]);
-        C.computation_results.x[:, :]    = JuMP.value.(x[:, :]);
-        C.computation_results.e_x[:, :]  = JuMP.value.(e_x[:, :]);
-    
-end

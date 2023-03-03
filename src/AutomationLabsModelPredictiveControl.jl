@@ -67,8 +67,12 @@ include("sub/model_modeler_implementation/polynet/mpc_modeler_implementation_pol
 include("sub/model_modeler_implementation/polynet/empc_modeler_implementation_polynet.jl")
 
 # neuralnetode type 1
-include("sub/model_modeler_implementation/neuralnetode_type1/mpc_modeler_implementation_neuralnetode_type1.jl")
-include("sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl")
+include(
+    "sub/model_modeler_implementation/neuralnetode_type1/mpc_modeler_implementation_neuralnetode_type1.jl",
+)
+include(
+    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
+)
 
 # linear model 
 include("sub/model_modeler_implementation/linear/mpc_modeler_implementation_linear.jl")

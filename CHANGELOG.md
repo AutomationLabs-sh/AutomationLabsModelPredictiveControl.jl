@@ -6,7 +6,10 @@
 * Clarification of proceed_controller function.
 * Clarification of modeler implementation from all models.
 * Tests modification and improvement.
-* Module InvariantSets are now with AutomationLabsModelPredictiveControl as the package is not yet register.
+* Julia code formatter.
+* Hidden empc tests.
+* Add Github Actions workflows.
+
 ## v0.1.3
 
 * Tests improvement.

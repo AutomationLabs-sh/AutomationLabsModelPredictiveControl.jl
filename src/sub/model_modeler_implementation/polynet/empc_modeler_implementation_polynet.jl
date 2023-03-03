@@ -139,9 +139,17 @@ function _economic_model_predictive_control_modeler_implementation(
 
         for j = 2:1:nbr_hidden+1
             for i = 1:1:nbr_neurons
-                JuMP.@NLconstraint( model_empc, y[i, j, k] == y[i, j-1, k] 
-                + f_activation([W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i]][1]) 
-                + f_activation( [W_layer[j][i, :]' * (W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i])][1][1] +  B_layer[j-1][i])
+                JuMP.@NLconstraint(
+                    model_empc,
+                    y[i, j, k] ==
+                    y[i, j-1, k] +
+                    f_activation([W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i]][1]) +
+                    f_activation(
+                        [
+                            W_layer[j][i, :]' *
+                            (W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i]),
+                        ][1][1] + B_layer[j-1][i],
+                    )
                 ) #hidden layer [1]for scalar expression
             end
         end
@@ -238,11 +246,25 @@ function _economic_model_predictive_control_modeler_implementation(
             for i = 1:1:nbr_neurons
                 JuMP.@constraint(model_empc, y_be[i, j, k] >= 0)
 
-                JuMP.@constraint(model_empc, y_be[i, j, k] >= [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] 
-                                    + [W_layer[j+1][i, :]' * (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i])][1][1] + B_layer[j][i]
+                JuMP.@constraint(
+                    model_empc,
+                    y_be[i, j, k] >=
+                    [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] +
+                    [
+                        W_layer[j+1][i, :]' *
+                        (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]),
+                    ][1][1] +
+                    B_layer[j][i]
                 )
-                JuMP.@constraint(model_empc, y_be[i, j, k] .<= [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] 
-                    + [W_layer[j+1][i, :]' * (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i])][1][1] + B_layer[j][i] .+ BigM * (1 .- Bin_1[i, j, k])
+                JuMP.@constraint(
+                    model_empc,
+                    y_be[i, j, k] .<=
+                    [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] +
+                    [
+                        W_layer[j+1][i, :]' *
+                        (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]),
+                    ][1][1] +
+                    B_layer[j][i] .+ BigM * (1 .- Bin_1[i, j, k])
                 )
                 JuMP.@constraint(
                     model_empc,

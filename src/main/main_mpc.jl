@@ -23,10 +23,10 @@ function proceed_controller(
     system,
     mpc_controller_type::String,
     mpc_horizon::Int,
-    mpc_sample_time::Int, 
-    mpc_state_reference::Vector, 
+    mpc_sample_time::Int,
+    mpc_state_reference::Vector,
     mpc_input_reference::Vector;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -37,15 +37,17 @@ function proceed_controller(
     if mpc_controller_type == "model_predictive_control"
 
         # Get mpc references over horizon 
-        mpc_references = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
+        mpc_references =
+            _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
 
         # Design the model predictive control controller
-        controller = _model_predictive_control_design(system, 
-                                      mpc_horizon, 
-                                      mpc_sample_time, 
-                                      mpc_references;
-                                      kws
-        ) 
+        controller = _model_predictive_control_design(
+            system,
+            mpc_horizon,
+            mpc_sample_time,
+            mpc_references;
+            kws,
+        )
 
         return controller
     end
@@ -54,25 +56,28 @@ function proceed_controller(
     if mpc_controller_type == "economic_model_predictive_control"
 
         # Get default parameters or user parameters
-        mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
+        mpc_method_optimization =
+            IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
 
         # Set references 
-        mpc_linearization_point = _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
+        mpc_linearization_point =
+            _design_reference_mpc(mpc_state_reference, mpc_input_reference, mpc_horizon)
 
         # Design the economic model predictive control controller
-        controller = _economic_model_predictive_control_design(system,
-                                      model_mlj_type,
-                                      mpc_horizon, 
-                                      mpc_method_optimization,
-                                      mpc_sample_time,
-                                      mpc_linearization_point,
-                                      Q = mpc_Q, 
-                                      R = mpc_R,
-                                      S = mpc_S,
-                                      max_time = mpc_max_time,
-                                      terminal_ingredients = mpc_terminal_ingredient, 
-                                      solver = mpc_solver_type
-        ) 
+        controller = _economic_model_predictive_control_design(
+            system,
+            model_mlj_type,
+            mpc_horizon,
+            mpc_method_optimization,
+            mpc_sample_time,
+            mpc_linearization_point,
+            Q = mpc_Q,
+            R = mpc_R,
+            S = mpc_S,
+            max_time = mpc_max_time,
+            terminal_ingredients = mpc_terminal_ingredient,
+            solver = mpc_solver_type,
+        )
 
         return controller
     end
@@ -97,9 +102,13 @@ The following variables are mendatories:
 * `input_reference`: the input reference.
 * `horizon`: the horizon for the mpc or empc. 
 """
-function _design_reference_mpc(state_reference::Vector, input_reference::Vector, horizon::Int)
+function _design_reference_mpc(
+    state_reference::Vector,
+    input_reference::Vector,
+    horizon::Int,
+)
 
-    x = state_reference .* ones(size(state_reference,1), horizon + 1)
+    x = state_reference .* ones(size(state_reference, 1), horizon + 1)
     u = input_reference .* ones(size(input_reference, 1), horizon)
 
     references = ReferencesStateInput(x, u)

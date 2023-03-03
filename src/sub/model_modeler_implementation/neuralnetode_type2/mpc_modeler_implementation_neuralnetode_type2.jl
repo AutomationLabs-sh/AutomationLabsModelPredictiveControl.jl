@@ -27,7 +27,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -38,10 +38,15 @@ function _model_predictive_control_modeler_implementation(
     state_reference = reference.x[:, begin] #state at first reference to compute the jacobian
     input_reference = reference.u[:, begin] #input at first reference to compute the jacobian
 
-    system_l = AutomationLabsSystems.proceed_system_linearization(system, state_reference, input_reference)
+    system_l = AutomationLabsSystems.proceed_system_linearization(
+        system,
+        state_reference,
+        input_reference,
+    )
 
-    if haskey(kws, :mpc_sample_time) == true  
-        system_l_d = AutomationLabsSystems.proceed_system_discretization(system_l, sample_time)
+    if haskey(kws, :mpc_sample_time) == true
+        system_l_d =
+            AutomationLabsSystems.proceed_system_discretization(system_l, sample_time)
     else
         @error "System discretization is requested but mpc sample time is not provided"
     end
@@ -52,8 +57,8 @@ function _model_predictive_control_modeler_implementation(
         horizon,
         reference,
         solver;
-        kws
-    )   
+        kws,
+    )
 
     return model_mpc
 end

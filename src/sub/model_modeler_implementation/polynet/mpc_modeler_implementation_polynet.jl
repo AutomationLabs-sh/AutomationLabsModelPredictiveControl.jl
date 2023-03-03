@@ -27,29 +27,33 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
     dict_kws = Dict{Symbol,Any}(kws_)
     kws = get(dict_kws, :kws, kws_)
-   
+
     #get A and B matrices from state space
     state_reference = reference.x[:, begin] #state at first reference to compute the jacobian
     input_reference = reference.u[:, begin] #input at first reference to compute the jacobian
-       
+
     # Linearize the system at state and reference
-    system_l = AutomationLabsSystems.proceed_system_linearization(system, state_reference, input_reference)
-   
+    system_l = AutomationLabsSystems.proceed_system_linearization(
+        system,
+        state_reference,
+        input_reference,
+    )
+
     model_mpc = _model_predictive_control_modeler_implementation(
         method,
         system_l,
         horizon,
         reference,
         solver;
-        kws
+        kws,
     )
-   
+
     return model_mpc
 end
 
@@ -62,7 +66,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -127,10 +131,19 @@ function _model_predictive_control_modeler_implementation(
 
         for j = 2:1:nbr_hidden+1
             for i = 1:1:nbr_neurons
-                JuMP.@NLconstraint( model_mpc, branch_poly[i, j-1, k] == f_activation([W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i]][1]) )
-                JuMP.@NLconstraint( model_mpc, y[i, j, k] == y[i, j-1, k] 
-                + branch_poly[i, j-1, k]
-                + f_activation([W_layer[j][i, :]' * branch_poly[:, j-1, k] + B_layer[j-1][i]][1])
+                JuMP.@NLconstraint(
+                    model_mpc,
+                    branch_poly[i, j-1, k] ==
+                    f_activation([W_layer[j][i, :]' * y[:, j-1, k] + B_layer[j-1][i]][1])
+                )
+                JuMP.@NLconstraint(
+                    model_mpc,
+                    y[i, j, k] ==
+                    y[i, j-1, k] +
+                    branch_poly[i, j-1, k] +
+                    f_activation(
+                        [W_layer[j][i, :]' * branch_poly[:, j-1, k] + B_layer[j-1][i]][1],
+                    )
                 ) #hidden layer [1]for scalar expression
             end
         end
@@ -138,7 +151,7 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, x[:, k+1] .== W_layer[:][end] * y[:, end, k]) #output layer
     end
 
-    if haskey(kws, :mpc_state_constraint) == true 
+    if haskey(kws, :mpc_state_constraint) == true
         #States constraints
         for k = 1:1:horizon+1
             for i = 1:1:nbr_states
@@ -192,7 +205,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -261,11 +274,25 @@ function _model_predictive_control_modeler_implementation(
             for i = 1:1:nbr_neurons
                 JuMP.@constraint(model_mpc, y_be[i, j, k] >= 0)
 
-                JuMP.@constraint(model_mpc, y_be[i, j, k] >= [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] 
-                                    + [W_layer[j+1][i, :]' * (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i])][1][1] + B_layer[j][i]
+                JuMP.@constraint(
+                    model_mpc,
+                    y_be[i, j, k] >=
+                    [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] +
+                    [
+                        W_layer[j+1][i, :]' *
+                        (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]),
+                    ][1][1] +
+                    B_layer[j][i]
                 )
-                JuMP.@constraint(model_mpc, y_be[i, j, k] .<= [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] 
-                    + [W_layer[j+1][i, :]' * (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i])][1][1] + B_layer[j][i] .+ BigM * (1 .- Bin_1[i, j, k])
+                JuMP.@constraint(
+                    model_mpc,
+                    y_be[i, j, k] .<=
+                    [W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]][1] +
+                    [
+                        W_layer[j+1][i, :]' *
+                        (W_layer[j+1][i, :]' * y_af[:, j, k] + B_layer[j][i]),
+                    ][1][1] +
+                    B_layer[j][i] .+ BigM * (1 .- Bin_1[i, j, k])
                 )
                 JuMP.@constraint(
                     model_mpc,
@@ -288,7 +315,7 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, x[:, k+1] .== W_layer[:][end] * y_af[:, end, k]) #output layer
     end
 
-    if haskey(kws, :mpc_state_constraint) == true 
+    if haskey(kws, :mpc_state_constraint) == true
         #States constraints
         for k = 1:1:horizon+1
             for i = 1:1:nbr_states

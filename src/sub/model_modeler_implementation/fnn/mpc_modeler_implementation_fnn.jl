@@ -27,7 +27,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -37,9 +37,13 @@ function _model_predictive_control_modeler_implementation(
     #get A and B matrices from state space
     state_reference = reference.x[:, begin] #state at first reference to compute the jacobian
     input_reference = reference.u[:, begin] #input at first reference to compute the jacobian
-    
+
     # Linearize the system at state and reference
-    system_l = AutomationLabsSystems.proceed_system_linearization(system, state_reference, input_reference)
+    system_l = AutomationLabsSystems.proceed_system_linearization(
+        system,
+        state_reference,
+        input_reference,
+    )
 
     model_mpc = _model_predictive_control_modeler_implementation(
         method,
@@ -47,7 +51,7 @@ function _model_predictive_control_modeler_implementation(
         horizon,
         reference,
         solver;
-        kws
+        kws,
     )
 
     return model_mpc
@@ -63,7 +67,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -139,7 +143,7 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, x[:, k+1] .== W_layer[:][end] * y[:, end, k]) #output layer
     end
 
-    if haskey(kws, :mpc_state_constraint) == true 
+    if haskey(kws, :mpc_state_constraint) == true
         #States constraints
         for k = 1:1:horizon+1
             for i = 1:1:nbr_states
@@ -193,7 +197,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -281,7 +285,7 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, x[:, k+1] .== W_layer[:][end] * y[:, end, k]) #output layer
     end
 
-    if haskey(kws, :mpc_state_constraint) == true 
+    if haskey(kws, :mpc_state_constraint) == true
         #States constraints
         for k = 1:1:horizon+1
             for i = 1:1:nbr_states

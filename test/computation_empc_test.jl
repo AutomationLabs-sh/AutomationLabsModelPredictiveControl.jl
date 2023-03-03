@@ -131,7 +131,7 @@ import ModelPredictiveControl: _economic_model_predictive_control_design
         method,
         sample_time,
         references,
-        solver = solver
+        solver = solver,
     )
 
     initialization = [0.35, 0.35, 0.35, 0.35]
@@ -147,9 +147,11 @@ import ModelPredictiveControl: _economic_model_predictive_control_design
     @test C_fnn_linear.computation_results.x ≈ C_fnn_nl.computation_results.x atol = 0.5
     @test C_fnn_linear.computation_results.x ≈ C_fnn_milp.computation_results.x atol = 0.5
     @test C_fnn_nl.computation_results.x ≈ C_fnn_milp.computation_results.x atol = 0.5
-    @test C_fnn_linear.computation_results.u[:, 1] ≈ C_fnn_nl.computation_results.u[:, 1] atol = 0.1
-    @test C_fnn_linear.computation_results.u[:, 1] ≈ C_fnn_milp.computation_results.u[:, 1] atol = 0.1
-    @test C_fnn_nl.computation_results.u ≈ C_fnn_milp.computation_results.u atol = 0.01 
+    @test C_fnn_linear.computation_results.u[:, 1] ≈ C_fnn_nl.computation_results.u[:, 1] atol =
+        0.1
+    @test C_fnn_linear.computation_results.u[:, 1] ≈ C_fnn_milp.computation_results.u[:, 1] atol =
+        0.1
+    @test C_fnn_nl.computation_results.u ≈ C_fnn_milp.computation_results.u atol = 0.01
 
 end
 
@@ -275,14 +277,17 @@ end
     C_resnet_milp.computation_results.u
 
     #@test
-    @test C_resnet_linear.computation_results.x ≈ C_resnet_nl.computation_results.x atol = 0.5
-    @test C_resnet_linear.computation_results.x ≈ C_resnet_milp.computation_results.x atol = 0.5
+    @test C_resnet_linear.computation_results.x ≈ C_resnet_nl.computation_results.x atol =
+        0.5
+    @test C_resnet_linear.computation_results.x ≈ C_resnet_milp.computation_results.x atol =
+        0.5
     @test C_resnet_nl.computation_results.x ≈ C_resnet_milp.computation_results.x atol = 0.5
     @test C_resnet_linear.computation_results.u[:, 1] ≈
           C_resnet_nl.computation_results.u[:, 1] atol = 1
     @test C_resnet_linear.computation_results.u[:, 1] ≈
           C_resnet_milp.computation_results.u[:, 1] atol = 1
-    @test C_resnet_nl.computation_results.u ≈ C_resnet_milp.computation_results.u atol = 0.01
+    @test C_resnet_nl.computation_results.u ≈ C_resnet_milp.computation_results.u atol =
+        0.01
 
 end
 
@@ -414,11 +419,11 @@ end
     @test C_densenet_nl.computation_results.x ≈ C_densenet_milp.computation_results.x atol =
         0.5
     @test C_densenet_linear.computation_results.u[:, 1] ≈
-          C_densenet_nl.computation_results.u[:, 1] atol = 0.1 
+          C_densenet_nl.computation_results.u[:, 1] atol = 0.1
     @test C_densenet_linear.computation_results.u[:, 1] ≈
-          C_densenet_milp.computation_results.u[:, 1] atol = 0.1 
+          C_densenet_milp.computation_results.u[:, 1] atol = 0.1
     @test C_densenet_nl.computation_results.u ≈ C_densenet_milp.computation_results.u atol =
-        0.1 
+        0.1
 
 end
 
@@ -511,8 +516,8 @@ end
         horizon,
         method,
         sample_time,
-        references
-            )
+        references,
+    )
 
 
     initialization = [0.35, 0.35, 0.35, 0.35]
@@ -525,43 +530,43 @@ end
     C_polynet_nl.computation_results.u
 
     ### polynet MILP MPC ###
-   #= solver = ModelPredictiveControl.Mosek_solver_def()
+    #= solver = ModelPredictiveControl.Mosek_solver_def()
 
-    method = ModelPredictiveControl.MixedIntegerLinearProgramming()
-    C_polynet_milp = ModelPredictiveControlDesign(
-        QTP_sys_polynet,
-        type_polynet,
-        horizon,
-        method,
-        sample_time,
-        references,
-    )
+     method = ModelPredictiveControl.MixedIntegerLinearProgramming()
+     C_polynet_milp = ModelPredictiveControlDesign(
+         QTP_sys_polynet,
+         type_polynet,
+         horizon,
+         method,
+         sample_time,
+         references,
+     )
 
 
-    initialization = [0.5, 0.5, 0.5, 0.5]
+     initialization = [0.5, 0.5, 0.5, 0.5]
 
-    UpdateInitialization!(C_polynet_milp, initialization)
+     UpdateInitialization!(C_polynet_milp, initialization)
 
-    Calculate!(C_polynet_milp)
+     Calculate!(C_polynet_milp)
 
-    C_polynet_milp.computation_results.x
-    C_polynet_milp.computation_results.u
-    C_polynet_milp.computation_results.e_x
-    C_polynet_milp.computation_results.e_u =#
+     C_polynet_milp.computation_results.x
+     C_polynet_milp.computation_results.u
+     C_polynet_milp.computation_results.e_x
+     C_polynet_milp.computation_results.e_u =#
 
     #@test
     @test C_polynet_linear.computation_results.x ≈ C_polynet_nl.computation_results.x atol =
-        0.5 broken=true
+        0.5 broken = true
     @test C_polynet_linear.computation_results.x ≈ C_polynet_milp.computation_results.x atol =
-        0.5  skip=true
+        0.5 skip = true
     @test C_polynet_nl.computation_results.x ≈ C_polynet_milp.computation_results.x atol =
-        0.01 skip=true
+        0.01 skip = true
     @test C_polynet_linear.computation_results.u[:, 1] ≈
-          C_polynet_nl.computation_results.u[:, 1] atol = 0.1  
+          C_polynet_nl.computation_results.u[:, 1] atol = 0.1
     @test C_polynet_linear.computation_results.u[:, 1] ≈
-          C_polynet_milp.computation_results.u[:, 1] atol = 0.1 skip=true
+          C_polynet_milp.computation_results.u[:, 1] atol = 0.1 skip = true
     @test C_polynet_nl.computation_results.u ≈ C_polynet_milp.computation_results.u atol =
-        0.01 skip=true
+        0.01 skip = true
 
 end
 
@@ -671,7 +676,7 @@ end
         method,
         sample_time,
         references,
-        solver = solver
+        solver = solver,
     )
 
     initialization = [0.35, 0.35, 0.35, 0.35]
@@ -687,9 +692,11 @@ end
     @test C_icnn_linear.computation_results.x ≈ C_icnn_nl.computation_results.x atol = 0.5
     @test C_icnn_linear.computation_results.x ≈ C_icnn_milp.computation_results.x atol = 0.5
     @test C_icnn_nl.computation_results.x ≈ C_icnn_milp.computation_results.x atol = 0.5
-    @test C_icnn_linear.computation_results.u[:, 1] ≈ C_icnn_nl.computation_results.u[:, 1] atol = 0.1 
+    @test C_icnn_linear.computation_results.u[:, 1] ≈ C_icnn_nl.computation_results.u[:, 1] atol =
+        0.1
 
-    @test C_icnn_linear.computation_results.u[:, 1] ≈ C_icnn_milp.computation_results.u[:, 1] atol = 0.1 
+    @test C_icnn_linear.computation_results.u[:, 1] ≈
+          C_icnn_milp.computation_results.u[:, 1] atol = 0.1
 
     @test C_icnn_nl.computation_results.u ≈ C_icnn_milp.computation_results.u atol = 0.01
 
@@ -789,10 +796,12 @@ end
 
     C_rbf_nl.computation_results.x
     C_rbf_nl.computation_results.u
-   
+
     #@test
-    @test C_rbf_linear.computation_results.x ≈ C_rbf_nl.computation_results.x atol = 0.5  broken=true
-    @test C_rbf_linear.computation_results.u[:, 1] ≈ C_rbf_nl.computation_results.u[:, 1] atol = 0.1 broken=true
+    @test C_rbf_linear.computation_results.x ≈ C_rbf_nl.computation_results.x atol = 0.5 broken =
+        true
+    @test C_rbf_linear.computation_results.u[:, 1] ≈ C_rbf_nl.computation_results.u[:, 1] atol =
+        0.1 broken = true
 
 end
 
@@ -821,21 +830,25 @@ end
     u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
 
     #get the neuralnetODE_type1 model to design the mpc controler
-    neuralnetODE_type1_machine = machine("./models_saved/neuralnetODE_type1_train_result.jls")
+    neuralnetODE_type1_machine =
+        machine("./models_saved/neuralnetODE_type1_train_result.jls")
 
     #extract best model from the all trained models
-    mlj_neuralnetODE_type1 = fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
-    f_neuralnetODE_type1 = fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
     type_neuralnetODE_type1 = mlj_neuralnetODE_type1.builder
 
     #system definition with Mathematical systems
-    QTP_sys_neuralnetODE_type1 = MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
-        f_neuralnetODE_type1,
-        4,
-        2,
-        x_cons,
-        u_cons,
-    )
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
 
     #MPC design parameters
     horizon = 5
@@ -871,10 +884,10 @@ end
 
     C_neuralnetODE_type1_linear.computation_results.x
     C_neuralnetODE_type1_linear.computation_results.u
-       
+
     #@test
-    @test C_neuralnetODE_type1_linear.computation_results.x ≈  x atol = 0.5 
-    @test C_neuralnetODE_type1_linear.computation_results.u[:, 1]  ≈ u[:, 1] atol  = 3
+    @test C_neuralnetODE_type1_linear.computation_results.x ≈ x atol = 0.5
+    @test C_neuralnetODE_type1_linear.computation_results.u[:, 1] ≈ u[:, 1] atol = 3
 
 end
 
@@ -911,17 +924,13 @@ end
     AB_t = fitted_params(linear_regressor_machine).coefficients
     AB = copy(AB_t')
     A = AB[:, 1:4]
-    B = AB[:, 5: end]
+    B = AB[:, 5:end]
 
     type_linear_regressor = linear_regressor_machine.model
 
     #system definition with Mathematical systems
-    QTP_sys_linear_regressor = MathematicalSystems.ConstrainedLinearControlDiscreteSystem(
-        A, 
-        B, 
-        x_cons,
-        u_cons,
-    )
+    QTP_sys_linear_regressor =
+        MathematicalSystems.ConstrainedLinearControlDiscreteSystem(A, B, x_cons, u_cons)
 
     #MPC design parameters
     horizon = 5
@@ -957,10 +966,10 @@ end
 
     C_linear_regressor_linear.computation_results.x
     C_linear_regressor_linear.computation_results.u
-       
+
     #@test
-    @test C_linear_regressor_linear.computation_results.x ≈  x atol = 0.5 
-    @test C_linear_regressor_linear.computation_results.u[:, 1]  ≈ u[:, 1] atol  = 3
+    @test C_linear_regressor_linear.computation_results.x ≈ x atol = 0.5
+    @test C_linear_regressor_linear.computation_results.u[:, 1] ≈ u[:, 1] atol = 3
 
 end
 

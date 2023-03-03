@@ -20,7 +20,7 @@ Model predictive control tuning implementation according to parameters and refer
 * `max_time`: model predictive control maximum time computation.
 """
 struct EconomicModelPredictiveControlTuning <: AbstractController
-    modeler#::JuMP
+    modeler::Any#::JuMP
     horizon::Int
     weights::WeightsCoefficient
     sample_time::Float64
@@ -51,7 +51,7 @@ Model predictive control main struct parameters. The controller as all the neces
 * `inputs_command`: model predictive control input after computation, which are sent to dynamical system.
 """
 mutable struct EconomicModelPredictiveControlController <: AbstractController
-	system#::MathematicalSystems
+    system::Any#::MathematicalSystems
     tuning::EconomicModelPredictiveControlTuning
     initialization::Vector{Float64}
     computation_results::EconomicModelPredictiveControlResults
@@ -76,65 +76,74 @@ Function that tunes a economic model predictive control.
 * `terminal_ingredients = false`: terminal ingredients of economic model predictive control (not implemnted yet)
 * `Computation`: modeler, optimizer and sample time.
 """
-function _economic_model_predictive_control_design(system::Union{MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem, 
-                                                            MathematicalSystems.ConstrainedLinearControlDiscreteSystem},
-                                      model_mlj::Union{AutomationLabsIdentification.linear, 
-                                                   AutomationLabsIdentification.Fnn, 
-                                                   AutomationLabsIdentification.Icnn,
-                                                   AutomationLabsIdentification.ResNet, 
-                                                   AutomationLabsIdentification.DenseNet, 
-                                                   AutomationLabsIdentification.Rbf, 
-                                                   AutomationLabsIdentification.PolyNet, 
-                                                   AutomationLabsIdentification.NeuralNetODE_type1, 
-                                                   AutomationLabsIdentification.NeuralNetODE_type2, 
-                                                   MLJMultivariateStatsInterface.MultitargetLinearRegressor},
-                                      horizon::Int, 
-                                      method::AbstractImplementation,
-                                      sample_time::Int, 
-                                      linearization_point::ReferencesStateInput;
-                                      Q::Float64 = 0.1, 
-                                      R::Float64 = 100.0,
-                                      S::Float64 = 0.0,
-                                      max_time::Float64 = 30.0,
-                                      terminal_ingredients::Bool = false, 
-                                      solver::AbstractSolvers = auto_solver_def()) #rather than the name of the solver
+function _economic_model_predictive_control_design(
+    system::Union{
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
+        MathematicalSystems.ConstrainedLinearControlDiscreteSystem,
+    },
+    model_mlj::Union{
+        AutomationLabsIdentification.linear,
+        AutomationLabsIdentification.Fnn,
+        AutomationLabsIdentification.Icnn,
+        AutomationLabsIdentification.ResNet,
+        AutomationLabsIdentification.DenseNet,
+        AutomationLabsIdentification.Rbf,
+        AutomationLabsIdentification.PolyNet,
+        AutomationLabsIdentification.NeuralNetODE_type1,
+        AutomationLabsIdentification.NeuralNetODE_type2,
+        MLJMultivariateStatsInterface.MultitargetLinearRegressor,
+    },
+    horizon::Int,
+    method::AbstractImplementation,
+    sample_time::Int,
+    linearization_point::ReferencesStateInput;
+    Q::Float64 = 0.1,
+    R::Float64 = 100.0,
+    S::Float64 = 0.0,
+    max_time::Float64 = 30.0,
+    terminal_ingredients::Bool = false,
+    solver::AbstractSolvers = auto_solver_def(),
+) #rather than the name of the solver
 
     # create the weight of the controller
-    weights = _create_weights_coefficients( system, 
-                                           Q, 
-                                           R, 
-                                           S)
-    
+    weights = _create_weights_coefficients(system, Q, R, S)
+
     # modeller implementation of model predictive control
-    model_empc = _economic_model_predictive_control_modeler_implementation( method,
-                                                             model_mlj,
-                                                             system,
-                                                             horizon,
-                                                             linearization_point, 
-                                                             solver)
+    model_empc = _economic_model_predictive_control_modeler_implementation(
+        method,
+        model_mlj,
+        system,
+        horizon,
+        linearization_point,
+        solver,
+    )
 
     # implementetation of terminal ingredients
     # not yet implemented with empc
 
     # add the quadratic cost function to the modeler model
-    model_empc = _create_economic_cost_function( model_empc, 
-                                                weights)
+    model_empc = _create_economic_cost_function(model_empc, weights)
 
     ### struct design: MPC tuning ###
-    tuning =  EconomicModelPredictiveControlTuning( model_empc,
-                                            horizon,
-                                            weights,
-                                            sample_time,
-                                            max_time)
+    tuning = EconomicModelPredictiveControlTuning(
+        model_empc,
+        horizon,
+        weights,
+        sample_time,
+        max_time,
+    )
 
-    
+
     ### struct design: set the controller ###
-    initialization, computation_results = _memory_allocation_initialization_results_empc(system, horizon)
+    initialization, computation_results =
+        _memory_allocation_initialization_results_empc(system, horizon)
 
-    return empc_controller = EconomicModelPredictiveControlController(   system,
-                                                                tuning,
-                                                                initialization,
-                                                                computation_results)
+    return empc_controller = EconomicModelPredictiveControlController(
+        system,
+        tuning,
+        initialization,
+        computation_results,
+    )
 end
 
 
@@ -146,41 +155,56 @@ Function that create the quadratic cost of the model predictive control.
 * `model_empc`: the JuMP struct.
 * `weights`: the weighing coefficient struct.
 """
-function _create_economic_cost_function(model_empc::JuMP.Model, 
-                                        weights::WeightsCoefficient)
+function _create_economic_cost_function(model_empc::JuMP.Model, weights::WeightsCoefficient)
 
     #get variable from model JuMP model_mpc
-    u   = model_empc[:u]
+    u = model_empc[:u]
     x = model_empc[:x]
-    horizon = size(u,2)
+    horizon = size(u, 2)
 
     #add the delta rate constraints if needed
-    if weights.S[1,1] != 0.0
+    if weights.S[1, 1] != 0.0
         #add delta_u variable
         JuMP.@variables(model_empc, begin
             delta_u[1:size(u, 1), 1:horizon]
         end)
 
         #Deviation inputs delta rate constraint
-        for i in 1 : horizon - 1
-            JuMP.@constraint(model_empc, delta_u[:,i] .==  u[:,i] .- u[:,i+1] )
-        end 
+        for i = 1:horizon-1
+            JuMP.@constraint(model_empc, delta_u[:, i] .== u[:, i] .- u[:, i+1])
+        end
 
     end
 
     #Add the quadratic cost function according to weight parameters
-    if weights.R[1,1] != 0.0 && weights.S[1,1] != 0.0
-        JuMP.@objective(model_empc, Min, x[:,end]' * weights.Q * x[:,end] +
-                                         sum(x[:,i]' * weights.Q * x[:,i] + 
-                                             u[:,i]' * weights.R * u[:,i] for i in 1:horizon) +
-                                         sum(delta_u[:,i]' * weights.S * delta_u[:,i] for i in 1: horizon-1))
-    
-    elseif weights.R[1,1] != 0.0
-        JuMP.@objective(model_empc, Min,  x[:,end]' * weights.Q * x[:,end] + sum(x[:,i]' * weights.Q * x[:,i] +
-                                            u[:,i]' * weights.R * u[:,i] for i in 1:horizon))
-    
+    if weights.R[1, 1] != 0.0 && weights.S[1, 1] != 0.0
+        JuMP.@objective(
+            model_empc,
+            Min,
+            x[:, end]' * weights.Q * x[:, end] +
+            sum(
+                x[:, i]' * weights.Q * x[:, i] + u[:, i]' * weights.R * u[:, i] for
+                i = 1:horizon
+            ) +
+            sum(delta_u[:, i]' * weights.S * delta_u[:, i] for i = 1:horizon-1)
+        )
+
+    elseif weights.R[1, 1] != 0.0
+        JuMP.@objective(
+            model_empc,
+            Min,
+            x[:, end]' * weights.Q * x[:, end] + sum(
+                x[:, i]' * weights.Q * x[:, i] + u[:, i]' * weights.R * u[:, i] for
+                i = 1:horizon
+            )
+        )
+
     else
-        JuMP.@objective(model_empc, Min, sum(x[:,i]' * weights.Q * x[:,i] for i in 1:horizon+1))
+        JuMP.@objective(
+            model_empc,
+            Min,
+            sum(x[:, i]' * weights.Q * x[:, i] for i = 1:horizon+1)
+        )
 
     end
 
@@ -189,20 +213,30 @@ function _create_economic_cost_function(model_empc::JuMP.Model,
 end
 
 # Memory allocation according to mathematical systems
-function _memory_allocation_initialization_results_empc(system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem, horizon )
+function _memory_allocation_initialization_results_empc(
+    system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
+    horizon,
+)
 
     initialization = Vector{Float64}(undef, system.statedim)
-    computation_results = EconomicModelPredictiveControlResults( Array{Float64}(undef, system.statedim, horizon +1),
-                                                     Array{Float64}(undef, system.inputdim, horizon) )
+    computation_results = EconomicModelPredictiveControlResults(
+        Array{Float64}(undef, system.statedim, horizon + 1),
+        Array{Float64}(undef, system.inputdim, horizon),
+    )
 
-    return  initialization, computation_results
-end 
+    return initialization, computation_results
+end
 
-function _memory_allocation_initialization_results_empc(system::MathematicalSystems.ConstrainedLinearControlDiscreteSystem, horizon )
+function _memory_allocation_initialization_results_empc(
+    system::MathematicalSystems.ConstrainedLinearControlDiscreteSystem,
+    horizon,
+)
 
     initialization = Vector{Float64}(undef, size(system.A, 1))
-    computation_results = EconomicModelPredictiveControlResults( Array{Float64}(undef, size(system.A, 1), horizon +1),
-                                                     Array{Float64}(undef, size(system.B, 2), horizon) )
+    computation_results = EconomicModelPredictiveControlResults(
+        Array{Float64}(undef, size(system.A, 1), horizon + 1),
+        Array{Float64}(undef, size(system.B, 2), horizon),
+    )
 
     return initialization, computation_results
 end

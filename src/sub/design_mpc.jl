@@ -34,13 +34,8 @@ function _model_predictive_control_design(
     # Discretization
     system_d = AutomationLabsSystems.proceed_system_discretization(system)
 
-    mpc_controller = _model_predictive_control_design(
-        system_d,
-        horizon,
-        sample_time,
-        references;
-        kws,
-    )
+    mpc_controller =
+        _model_predictive_control_design(system_d, horizon, sample_time, references; kws)
 
     return mpc_controller
 end
@@ -71,7 +66,8 @@ function _model_predictive_control_design(
     # User defined parameters or users define parameters
     mpc_programming_type = get(kws, :mpc_programming_type, "linear")
     mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
-    mpc_solver_choosen = get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
+    mpc_solver_choosen =
+        get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
     mpc_solver = _IMPLEMENTATION_SOLVER_LIST[Symbol(mpc_solver_choosen)]
     mpc_terminal_ingredient = get(
         kws,
@@ -161,14 +157,16 @@ function _model_predictive_control_design(
     # User defined parameters or users define parameters
     mpc_programming_type = get(kws, :mpc_programming_type, "non_linear")
     mpc_method_optimization = IMPLEMENTATION_PROGRAMMING_LIST[Symbol(mpc_programming_type)]
-    mpc_solver_choosen = get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
+    mpc_solver_choosen =
+        get(kws, :mpc_solver, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_solver])
     mpc_solver = _IMPLEMENTATION_SOLVER_LIST[Symbol(mpc_solver_choosen)]
     mpc_terminal_ingredient = get(
         kws,
         :mpc_terminal_ingredient,
         _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_terminal_ingredient],
     )
-    mpc_max_time = get(kws, :mpc_max_time, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_max_time])
+    mpc_max_time =
+        get(kws, :mpc_max_time, _DEFAULT_PARAMETERS_MODEL_PREDICTIVE_CONTROL[:mpc_max_time])
 
     # Create the weight of the controller
     weights = _create_weights_coefficients(system; kws)
@@ -315,9 +313,13 @@ function _create_terminal_ingredient(
     e_x = model_mpc[:e_x]
 
     # Compute the terminal cost P with algebraix ricatti equation (ARE)
-    system_l = AutomationLabsSystems.proceed_system_linearization(system, state_reference, input_reference)
+    system_l = AutomationLabsSystems.proceed_system_linearization(
+        system,
+        state_reference,
+        input_reference,
+    )
     #A_sys, B_sys = system_linearization(system, state_reference, input_reference)
-    A_sys = system_l.A 
+    A_sys = system_l.A
     B_sys = system_l.B
     P_cost = ControlSystems.are(ControlSystems.Discrete, A_sys, B_sys, weights.Q, weights.R)
 
@@ -326,7 +328,7 @@ function _create_terminal_ingredient(
         JuMP.@constraint(model_mpc, e_x[:, end] .== 0)
 
     elseif terminal_ingredient == "contractive" #&&
-           #haskey(kws, :mpc_state_constraint) == true
+        #haskey(kws, :mpc_state_constraint) == true
         P_contract = LinearAlgebra.Matrix(LinearAlgebra.I, size(e_x, 1), size(e_x, 1))
         JuMP.@constraint(
             model_mpc,
@@ -335,7 +337,7 @@ function _create_terminal_ingredient(
         )
 
     elseif terminal_ingredient == "neighborhood" #&&
-           #haskey(kws, :mpc_state_constraint) == true
+        #haskey(kws, :mpc_state_constraint) == true
 
         # Get state constraint
         x_hyperrectangle = LazySets.vertices_list(system.X)
@@ -377,7 +379,7 @@ function _create_terminal_ingredient(
         end
 
     elseif terminal_ingredient == "none" #&& haskey(kws, :mpc_state_constraint) == true
-        #no terminal constraint to add
+    #no terminal constraint to add
 
     else
         #no terminal constraint to add

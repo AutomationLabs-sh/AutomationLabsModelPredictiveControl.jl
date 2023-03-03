@@ -37,8 +37,8 @@ function _economic_model_predictive_control_modeler_implementation(
     u_constraints = hcat(u_hyperrectangle[end], u_hyperrectangle[begin])
 
     #get A and B matrices from state space
-    A  = system.A;
-    B  = system.B;
+    A = system.A
+    B = system.B
 
     #the jump model is designed       
     model_empc = _JuMP_model_definition(method, solver)

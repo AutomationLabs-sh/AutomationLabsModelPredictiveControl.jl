@@ -23,7 +23,7 @@ function _model_predictive_control_modeler_implementation(
     horizon::Int,
     reference::ReferencesStateInput,
     solver::AbstractSolvers;
-    kws_...
+    kws_...,
 )
 
     # Get argument kws
@@ -38,8 +38,8 @@ function _model_predictive_control_modeler_implementation(
     u_constraints = hcat(u_hyperrectangle[end], u_hyperrectangle[begin])
 
     #get A and B matrices from state space
-    A  = system.A;
-    B  = system.B;
+    A = system.A
+    B = system.B
 
     #the jump model is designed       
     model_mpc = _JuMP_model_definition(method, solver)
@@ -59,7 +59,7 @@ function _model_predictive_control_modeler_implementation(
         JuMP.@constraint(model_mpc, e_x[:, k+1] .== A * e_x[:, k] + B * e_u[:, k]) #output layer
     end
 
-    if haskey(kws, :mpc_state_constraint) == true 
+    if haskey(kws, :mpc_state_constraint) == true
         #States constraints
         for k = 1:1:horizon+1
             for i = 1:1:size(system.A, 1)
