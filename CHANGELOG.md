@@ -1,6 +1,10 @@
 # AutomationLabsModelPredictiveControl Changelog
 
-## v0.1.4
+## v0.1.5
+
+* Hidden InvariantSets.jl while it is not register on Julia registry.
+
+## v0.1.4Manifest.toml
 
 * Import AutomationLabsSystems, system design and linearization are now with this package.
 * Clarification of proceed_controller function.

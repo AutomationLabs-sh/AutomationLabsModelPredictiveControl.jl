@@ -339,6 +339,8 @@ function _create_terminal_ingredient(
     elseif terminal_ingredient == "neighborhood" #&&
         #haskey(kws, :mpc_state_constraint) == true
 
+        @warn "neighborhood terminal state constraint is not yet implemented"
+        #=
         # Get state constraint
         x_hyperrectangle = LazySets.vertices_list(system.X)
         mpc_state_constraint = hcat(x_hyperrectangle[end], x_hyperrectangle[begin])
@@ -377,7 +379,7 @@ function _create_terminal_ingredient(
         for i = 1:1:size(Hx, 1)
             JuMP.@constraint(model_mpc, e_x[:, end]' * Hx[i, :] <= bx[i])
         end
-
+        =#
     elseif terminal_ingredient == "none" #&& haskey(kws, :mpc_state_constraint) == true
     #no terminal constraint to add
 

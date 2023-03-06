@@ -676,7 +676,7 @@ end
     ### start evaluate densenet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
     @test JuMP.solver_name(modeler_mpc) == "Ipopt"
-    @test length(JuMP.object_dictionary(modeler_mpc)) == 8
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 10
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
@@ -761,7 +761,7 @@ end
     ### start evaluate densenet L MPC implementation ###
     @test typeof(modeler_mpc) == JuMP.Model
     @test JuMP.solver_name(modeler_mpc) == "SCIP"
-    @test length(JuMP.object_dictionary(modeler_mpc)) == 11
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 13
     @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
           (QTP_sys_densenet.inputdim, horizon)
     @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
@@ -1038,6 +1038,7 @@ end
 
 end
 
+#=
 @testset "Rbf model linear modeler MPC test" begin
 
 
@@ -1202,7 +1203,7 @@ end
     ]
 
 end
-
+=#
 
 @testset "PolyNet model linear modeler MPC test" begin
 

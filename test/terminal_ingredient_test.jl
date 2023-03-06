@@ -326,7 +326,7 @@ end
     @test c_equality.computation_results.u != 0
 
 end
-
+#=
 @testset "Neighborhood terminal ingredient computation" begin
 
     # Parameters                 
@@ -436,4 +436,5 @@ end
     @test c_neighborhood.computation_results.u != 0
 
 end
+=#
 end
