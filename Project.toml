@@ -37,6 +37,7 @@ MLJMultivariateStatsInterface = "0.5"
 MathematicalSystems = "0.13"
 MosekTools = "0.13"
 OSQP = "0.8"
+Polyhedra = "0.7"
 SCIP = "0.11"
 julia = "1"
 
