@@ -23,8 +23,8 @@ Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
 SCIP = "82193955-e24f-5292-bf16-6f2c5261a85f"
 
 [compat]
-AutomationLabsIdentification = "<0.3"
-AutomationLabsSystems = "<0.2"
+AutomationLabsIdentification = "0.2.3"
+AutomationLabsSystems = "0.1.3"
 ControlSystems = "1"
 Flux = "0.13"
 ForwardDiff = "0.10"
