@@ -1,7 +1,7 @@
 name = "AutomationLabsModelPredictiveControl"
 uuid = "731a2950-2bc0-4254-a525-a4bb07017e97"
 authors = ["Pierre Blaud <pierre.blaud@ikmail.com> and contributors"]
-version = "0.1.5"
+version = "0.1.2"
 
 [deps]
 AutomationLabsIdentification = "48ff5a6f-d08b-4053-9585-6a9e3e078386"
