@@ -1,29 +1,16 @@
 # AutomationLabsModelPredictiveControl Changelog
 
-## v0.1.5
+## v0.1.2
 
+* Add MPC terminal ingredient with equality, contractive and neighborhood and tests.
 * Hidden InvariantSets.jl while it is not register on Julia registry.
-
-## v0.1.4Manifest.toml
-
 * Import AutomationLabsSystems, system design and linearization are now with this package.
 * Clarification of proceed_controller function.
 * Clarification of modeler implementation from all models.
-* Tests modification and improvement.
+* Package simplification and tests improvement.
 * Julia code formatter.
 * Hidden empc tests.
 * Add Github Actions workflows.
-
-## v0.1.3
-
-* Tests improvement.
-
-## v0.1.2
-
-* Update dependencies.
-* Add MPC terminal ingredient with equality, contractive and neighborhood.
-* Package simplification and tests improvement.
-* Add terminal ingredient tests. 
 
 ## v0.1.1
 
