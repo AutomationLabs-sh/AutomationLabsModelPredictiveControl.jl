@@ -18,7 +18,6 @@ import Ipopt
 import JuMP
 import LazySets
 import MathematicalSystems
-import MosekTools
 import MLJ
 import OSQP
 import Polyhedra

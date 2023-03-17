@@ -4,6 +4,7 @@
 
 * Add Rknn1, Rknn2 and Rknn4 as models.
 * Remove neuralode_type1 and keep only neuralode_type2 as neuralODE from AutomationLabsIdentification.jl.
+* Remove Mosektools as deps.
 * Tests improvement.
 
 ## v0.1.2
