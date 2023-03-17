@@ -66,13 +66,31 @@ include("sub/model_modeler_implementation/rbf/empc_modeler_implementation_rbf.jl
 include("sub/model_modeler_implementation/polynet/mpc_modeler_implementation_polynet.jl")
 include("sub/model_modeler_implementation/polynet/empc_modeler_implementation_polynet.jl")
 
-# neuralnetode type 1
+# neuralode
 include(
-    "sub/model_modeler_implementation/neuralnetode_type1/mpc_modeler_implementation_neuralnetode_type1.jl",
-)
+    "sub/model_modeler_implementation/neuralode/mpc_modeler_implementation_neuralode.jl")
+#include(
+#    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
+#)
+
+# Rknn1
 include(
-    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
-)
+    "sub/model_modeler_implementation/rknn1/mpc_modeler_implementation_rknn1.jl")
+#include(
+#    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
+#)
+
+# Rknn2
+include("sub/model_modeler_implementation/rknn2/mpc_modeler_implementation_rknn2.jl")
+#include(
+#    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
+#)
+
+# Rknn4
+include("sub/model_modeler_implementation/rknn4/mpc_modeler_implementation_rknn4.jl")
+#include(
+#    "sub/model_modeler_implementation/neuralnetode_type1/empc_modeler_implementation_neuralnetode_type1.jl",
+#)
 
 # linear model 
 include("sub/model_modeler_implementation/linear/mpc_modeler_implementation_linear.jl")

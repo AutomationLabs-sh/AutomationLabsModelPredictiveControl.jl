@@ -133,14 +133,17 @@ end
     x_ref = [0.65, 0.65, 0.65, 0.65] #.* ones(4, horizon + 1)
     u_ref = [1.2, 1.2] #.* ones(2, horizon)
 
+    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    nbr_state = 4
+    nbr_input = 2
+
     system = AutomationLabsSystems.proceed_system(
-        "discrete",
-        "identification";
-        f = densenet_machine,
+        f_densenet,
+        nbr_state,
+        nbr_input,
+        "discrete";
         state_constraint = x_cons,
         input_constraint = u_cons,
-        nbr_state = 4,
-        nbr_input = 2,
     )
 
     # None terminal constraint with terminal cost
@@ -207,14 +210,17 @@ end
     x_ref = [0.65, 0.65, 0.65, 0.65] #.* ones(4, horizon + 1)
     u_ref = [1.2, 1.2] #.* ones(2, horizon)
 
+    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    nbr_state = 4
+    nbr_input = 2
+
     system = AutomationLabsSystems.proceed_system(
-        "discrete",
-        "identification";
-        f = densenet_machine,
+        f_densenet,
+        nbr_state,
+        nbr_input,
+        "discrete";
         state_constraint = x_cons,
         input_constraint = u_cons,
-        nbr_state = 4,
-        nbr_input = 2,
     )
 
     # Contractive terminal constraint with terminal cost
@@ -283,14 +289,17 @@ end
     x_ref = [0.65, 0.65, 0.65, 0.65] #.* ones(4, horizon + 1)
     u_ref = [1.2, 1.2] #.* ones(2, horizon)
 
+    f_densenet = fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
+    nbr_state = 4
+    nbr_input = 2
+
     system = AutomationLabsSystems.proceed_system(
-        "discrete",
-        "identification";
-        f = densenet_machine,
+        f_densenet,
+        nbr_state,
+        nbr_input,
+        "discrete";
         state_constraint = x_cons,
         input_constraint = u_cons,
-        nbr_state = 4,
-        nbr_input = 2,
     )
 
     # Equality terminal constraint with terminal cost

@@ -1038,7 +1038,6 @@ end
 
 end
 
-#=
 @testset "Rbf model linear modeler MPC test" begin
 
 
@@ -1203,7 +1202,6 @@ end
     ]
 
 end
-=#
 
 @testset "PolyNet model linear modeler MPC test" begin
 
@@ -1373,92 +1371,6 @@ end
 
 end
 
-#=
-@testset "PolyNet model milp modeler MPC test" begin
-
-    #get the polynet model to design the mpc controler
-    polynet_machine = machine("./models_saved/polynet_train_result.jls")
-
-    #extract best model from the all trained models
-    mlj_polynet = fitted_params(fitted_params(polynet_machine).machine).best_model
-    f_polynet = fitted_params(fitted_params(polynet_machine).machine).best_fitted_params[1]
-    model_polynet = mlj_polynet.builder
-
-    method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
-
-    #system definition with MAthematical systems
-    hmin = 0.2
-    h1max = 1.36
-    h2max = 1.36
-    h3max = 1.30
-    h4max = 1.30
-    qmin = 0
-    qamax = 4
-    qbmax = 3.26
-
-    #Constraint definition:
-    x_cons = LazySets.Hyperrectangle(
-        low = [hmin, hmin, hmin, hmin],
-        high = [h1max, h2max, h3max, h4max],
-    )
-    u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
-
-    QTP_sys_polynet = MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
-        f_polynet,
-        4,
-        2,
-        x_cons,
-        u_cons,
-    )
-
-    #MPC design parameters
-    horizon = 15
-    sample_time = 5
-    terminal_ingredients = false
-    max_time = 5
-    x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
-    u = [1.2, 1.2] * ones(1, horizon)
-
-    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
-
-    solver = auto_solver_def()
-
-    modeler_mpc = _model_predictive_control_modeler_implementation(
-        method,
-        model_polynet,
-        QTP_sys_polynet,
-        horizon,
-        references,
-        solver,
-    )
-
-    ### start evaluate polynet L MPC implementation ###
-    @test typeof(modeler_mpc) == JuMP.Model
-    @test JuMP.solver_name(modeler_mpc) == "SCIP"
-    @test length(JuMP.object_dictionary(modeler_mpc)) == 10
-    @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
-          (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) == (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) == (QTP_sys_polynet.inputdim, horizon)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
-          (QTP_sys_polynet.statedim, horizon + 1)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
-          (QTP_sys_polynet.statedim, horizon + 1)
-    @test size(JuMP.object_dictionary(modeler_mpc)[:e_x]) ==
-          (QTP_sys_polynet.statedim, horizon + 1)
-    @test JuMP.objective_function(modeler_mpc) == 0
-    @test JuMP.objective_function_type(modeler_mpc) == JuMP.AffExpr
-    @test JuMP.list_of_constraint_types(modeler_mpc) == [
-        (AffExpr, MathOptInterface.EqualTo{Float64}),
-        (AffExpr, MathOptInterface.GreaterThan{Float64}),
-        (AffExpr, MathOptInterface.LessThan{Float64}),
-        (VariableRef, MathOptInterface.EqualTo{Float64}),
-        (VariableRef, MathOptInterface.ZeroOne),
-    ]
-end
-
-=#
-
 @testset "linear_regressor model linear modeler MPC test" begin
 
     #get the linear_regressor model to design the mpc controler
@@ -1514,7 +1426,6 @@ end
 
     modeler_mpc = _model_predictive_control_modeler_implementation(
         method,
-        type_linear_regressor,
         QTP_sys_linear_regressor,
         horizon,
         references,
@@ -1547,11 +1458,11 @@ end
 
 end
 
-@testset "neuralnetODE_type1 model linear modeler MPC test" begin
+@testset "NeuralODE model linear modeler MPC test" begin
 
     #get the neuralnetODE_type1 model to design the mpc controler
     neuralnetODE_type1_machine =
-        machine("./models_saved/neuralnetODE_type1_train_result.jls")
+        machine("./models_saved/NeuralODE_train_result.jls")
 
     #extract best model from the all trained models
     mlj_neuralnetODE_type1 =
@@ -1635,6 +1546,270 @@ end
 
 end
 
+@testset "Rknn1 model linear modeler MPC test" begin
+
+    #get the neuralnetODE_type1 model to design the mpc controler
+    rknn1_machine =
+        machine("./models_saved/rknn1_train_result.jls")
+
+    #extract best model from the all trained models
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn1_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn1_machine).machine).best_fitted_params[1]
+    model_rknn1 = mlj_neuralnetODE_type1.builder
+
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
+    #system definition with MAthematical systems
+    hmin = 0.2
+    h1max = 1.36
+    h2max = 1.36
+    h3max = 1.30
+    h4max = 1.30
+    qmin = 0
+    qamax = 4
+    qbmax = 3.26
+
+    #Constraint definition:
+    x_cons = LazySets.Hyperrectangle(
+        low = [hmin, hmin, hmin, hmin],
+        high = [h1max, h2max, h3max, h4max],
+    )
+    u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
+
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
+
+    #MPC design parameters
+    horizon = 15
+    sample_time = 5
+    terminal_ingredients = false
+    max_time = 5
+    x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
+    u = [1.2, 1.2] * ones(1, horizon)
+
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
+
+    solver = auto_solver_def()
+
+    modeler_mpc = _model_predictive_control_modeler_implementation(
+        method,
+        model_rknn1,
+        QTP_sys_neuralnetODE_type1,
+        horizon,
+        references,
+        solver,
+    )
+
+
+    ### start evaluate neuralnetODE_type1 L MPC implementation ###
+    @test typeof(modeler_mpc) == JuMP.Model
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 6
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test JuMP.objective_function(modeler_mpc) == 0
+    @test JuMP.objective_function_type(modeler_mpc) == JuMP.AffExpr
+    @test JuMP.list_of_constraint_types(modeler_mpc) == [
+        (AffExpr, MathOptInterface.EqualTo{Float64}),
+        (AffExpr, MathOptInterface.LessThan{Float64}),
+        (VariableRef, MathOptInterface.EqualTo{Float64}),
+    ]
+
+end
+
+@testset "Rknn2 model linear modeler MPC test" begin
+
+    #get the neuralnetODE_type1 model to design the mpc controler
+    rknn2_machine =
+        machine("./models_saved/rknn2_train_result.jls")
+
+    #extract best model from the all trained models
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn2_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn2_machine).machine).best_fitted_params[1]
+    model_rknn2 = mlj_neuralnetODE_type1.builder
+
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
+    #system definition with MAthematical systems
+    hmin = 0.2
+    h1max = 1.36
+    h2max = 1.36
+    h3max = 1.30
+    h4max = 1.30
+    qmin = 0
+    qamax = 4
+    qbmax = 3.26
+
+    #Constraint definition:
+    x_cons = LazySets.Hyperrectangle(
+        low = [hmin, hmin, hmin, hmin],
+        high = [h1max, h2max, h3max, h4max],
+    )
+    u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
+
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
+
+    #MPC design parameters
+    horizon = 15
+    sample_time = 5
+    terminal_ingredients = false
+    max_time = 5
+    x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
+    u = [1.2, 1.2] * ones(1, horizon)
+
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
+
+    solver = auto_solver_def()
+
+    modeler_mpc = _model_predictive_control_modeler_implementation(
+        method,
+        model_rknn2,
+        QTP_sys_neuralnetODE_type1,
+        horizon,
+        references,
+        solver,
+    )
+
+    ### start evaluate neuralnetODE_type1 L MPC implementation ###
+    @test typeof(modeler_mpc) == JuMP.Model
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 6
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test JuMP.objective_function(modeler_mpc) == 0
+    @test JuMP.objective_function_type(modeler_mpc) == JuMP.AffExpr
+    @test JuMP.list_of_constraint_types(modeler_mpc) == [
+        (AffExpr, MathOptInterface.EqualTo{Float64}),
+        (AffExpr, MathOptInterface.LessThan{Float64}),
+        (VariableRef, MathOptInterface.EqualTo{Float64}),
+    ]
+
+end
+
+@testset "Rknn4 model linear modeler MPC test" begin
+
+    #get the neuralnetODE_type1 model to design the mpc controler
+    rknn4_machine =
+        machine("./models_saved/rknn4_train_result.jls")
+
+    #extract best model from the all trained models
+    mlj_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn4_machine).machine).best_model
+    f_neuralnetODE_type1 =
+        fitted_params(fitted_params(rknn4_machine).machine).best_fitted_params[1]
+    model_rknn4 = mlj_neuralnetODE_type1.builder
+
+    method = AutomationLabsModelPredictiveControl.LinearProgramming()
+
+    #system definition with MAthematical systems
+    hmin = 0.2
+    h1max = 1.36
+    h2max = 1.36
+    h3max = 1.30
+    h4max = 1.30
+    qmin = 0
+    qamax = 4
+    qbmax = 3.26
+
+    #Constraint definition:
+    x_cons = LazySets.Hyperrectangle(
+        low = [hmin, hmin, hmin, hmin],
+        high = [h1max, h2max, h3max, h4max],
+    )
+    u_cons = LazySets.Hyperrectangle(low = [qmin, qmin], high = [qamax, qbmax])
+
+    QTP_sys_neuralnetODE_type1 =
+        MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem(
+            f_neuralnetODE_type1,
+            4,
+            2,
+            x_cons,
+            u_cons,
+        )
+
+    #MPC design parameters
+    horizon = 15
+    sample_time = 5
+    terminal_ingredients = false
+    max_time = 5
+    x = [0.65, 0.65, 0.65, 0.65] * ones(1, horizon + 1)
+    u = [1.2, 1.2] * ones(1, horizon)
+
+    references = AutomationLabsModelPredictiveControl.ReferencesStateInput(x, u)
+
+    solver = auto_solver_def()
+
+    modeler_mpc = _model_predictive_control_modeler_implementation(
+        method,
+        model_rknn4,
+        QTP_sys_neuralnetODE_type1,
+        horizon,
+        references,
+        solver,
+    )
+
+    ### start evaluate neuralnetODE_type1 L MPC implementation ###
+    @test typeof(modeler_mpc) == JuMP.Model
+    @test JuMP.solver_name(modeler_mpc) == "SCIP"
+    @test length(JuMP.object_dictionary(modeler_mpc)) == 6
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u_reference]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_u]) ==
+          (QTP_sys_neuralnetODE_type1.inputdim, horizon)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x_reference]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test size(JuMP.object_dictionary(modeler_mpc)[:e_x]) ==
+          (QTP_sys_neuralnetODE_type1.statedim, horizon + 1)
+    @test JuMP.objective_function(modeler_mpc) == 0
+    @test JuMP.objective_function_type(modeler_mpc) == JuMP.AffExpr
+    @test JuMP.list_of_constraint_types(modeler_mpc) == [
+        (AffExpr, MathOptInterface.EqualTo{Float64}),
+        (AffExpr, MathOptInterface.LessThan{Float64}),
+        (VariableRef, MathOptInterface.EqualTo{Float64}),
+    ]
+
+end
 
 #=
 

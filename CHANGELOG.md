@@ -1,5 +1,11 @@
 # AutomationLabsModelPredictiveControl Changelog
 
+## v0.1.3
+
+* Add Rknn1, Rknn2 and Rknn4 as models.
+* Remove neuralode_type1 and keep only neuralode_type2 as neuralODE from AutomationLabsIdentification.jl.
+* Tests improvement.
+
 ## v0.1.2
 
 * Add MPC terminal ingredient with equality, contractive and neighborhood and tests.
