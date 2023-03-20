@@ -3,6 +3,7 @@
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 ![CI](https://github.com/AutomationLabs-sh/AutomationLabsModelPredictiveControl.jl/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/AutomationLabs-sh/AutomationLabsModelPredictiveControl.jl/branch/main/graph/badge.svg?token=0TWCP0OT2D)](https://codecov.io/gh/AutomationLabs-sh/AutomationLabsModelPredictiveControl.jl)
 
 Welcome to AutomationLabsModelPredictiveControl.jl package. AutomationLabsModelPredictive is a low level package for AutomationLabs platform. This repository is not intended to be directly imported by the user.
 
