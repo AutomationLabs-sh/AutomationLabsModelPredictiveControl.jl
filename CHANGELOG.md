@@ -1,6 +1,6 @@
 # AutomationLabsModelPredictiveControl Changelog
 
-## v0.1.3
+## v0.1.4
 
 * Remove mosek_solver_def type.
 * Remove windows os ci.
