@@ -1,16 +1,11 @@
 # AutomationLabsModelPredictiveControl Changelog
 
-## v0.1.4
-
-* Remove mosek_solver_def type.
-* Remove windows os ci.
-* Tests improvement.
-
 ## v0.1.3
 
 * Add Rknn1, Rknn2 and Rknn4 as models.
 * Remove neuralode_type1 and keep only neuralode_type2 as neuralODE from AutomationLabsIdentification.jl.
-* Remove Mosektools as deps.
+* Remove Mosektools as deps and mosek_solver_def type.
+* Remove windows os ci.
 * Tests improvement.
 
 ## v0.1.2
