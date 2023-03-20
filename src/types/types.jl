@@ -180,12 +180,6 @@ Linear and non-linear quadratic solver.
 struct ipopt_solver_def <: AbstractSolvers end
 
 """
-    mosek
-Linear and integer quadratic solver.
-"""
-struct mosek_solver_def <: AbstractSolvers end
-
-"""
     SCIP
 Linear and integer and non-linear quadratic solver.
 """

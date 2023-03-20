@@ -9,11 +9,6 @@
 module MpcDesignImplementationTest
 
 using MLJ
-using MLJFlux
-using MLJTuning
-using MLJBase
-using MLJParticleSwarmOptimization
-using StableRNGs
 using AutomationLabsIdentification
 using MathematicalSystems
 using LazySets
