@@ -11,7 +11,7 @@ const _IMPLEMENTATION_SOLVER_LIST = (
     scip = scip_solver_def(),
     #mosek = mosek_solver_def(),
     ipopt = ipopt_solver_def(),
-    highs = highs_solver_def(),
+    #highs = highs_solver_def(),
     auto = auto_solver_def(),
 )
 
@@ -23,7 +23,7 @@ function _JuMP_model_definition(
         osqp_solver_def,
         scip_solver_def,
         #mosek_solver_def,
-        highs_solver_def,
+        #highs_solver_def,
         ipopt_solver_def,
     },
 )
@@ -100,7 +100,7 @@ function _selection_solver_JuMP_model(solver::osqp_solver_def)
 
     return model
 end
-
+#=
 function _selection_solver_JuMP_model(solver::highs_solver_def)
 
     model = JuMP.Model(JuMP.optimizer_with_attributes(HiGHS.Optimizer))
@@ -108,7 +108,7 @@ function _selection_solver_JuMP_model(solver::highs_solver_def)
 
     return model
 end
-
+=#
 function _selection_solver_JuMP_model(solver::ipopt_solver_def)
 
     model = JuMP.Model(JuMP.optimizer_with_attributes(Ipopt.Optimizer))
