@@ -15,6 +15,7 @@ using LazySets
 using JuMP
 using Test
 using MathOptInterface
+using AutomationLabsSystems
 
 using AutomationLabsModelPredictiveControl
 
@@ -31,7 +32,7 @@ import AutomationLabsModelPredictiveControl: _JuMP_model_definition
     #extract best model from the all trained models
     mlj_fnn = fitted_params(fitted_params(fnn_machine).machine).best_model
     f_fnn = fitted_params(fitted_params(fnn_machine).machine).best_fitted_params[1]
-    model_fnn = mlj_fnn.builder
+    model_fnn = AutomationLabsSystems.Fnn()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -113,7 +114,7 @@ end
     #extract best model from the all trained models
     mlj_fnn = fitted_params(fitted_params(fnn_machine).machine).best_model
     f_fnn = fitted_params(fitted_params(fnn_machine).machine).best_fitted_params[1]
-    model_fnn = mlj_fnn.builder
+    model_fnn = AutomationLabsSystems.Fnn()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -195,7 +196,7 @@ end
     #extract best model from the all trained models
     mlj_fnn = fitted_params(fitted_params(fnn_machine).machine).best_model
     f_fnn = fitted_params(fitted_params(fnn_machine).machine).best_fitted_params[1]
-    model_fnn = mlj_fnn.builder
+    model_fnn = AutomationLabsSystems.Fnn()
 
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
 
@@ -278,7 +279,7 @@ end
     #extract best model from the all trained models
     mlj_resnet = fitted_params(fitted_params(resnet_machine).machine).best_model
     f_resnet = fitted_params(fitted_params(resnet_machine).machine).best_fitted_params[1]
-    model_resnet = mlj_resnet.builder
+    model_resnet = AutomationLabsSystems.ResNet()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -362,7 +363,7 @@ end
     #extract best model from the all trained models
     mlj_resnet = fitted_params(fitted_params(resnet_machine).machine).best_model
     f_resnet = fitted_params(fitted_params(resnet_machine).machine).best_fitted_params[1]
-    model_resnet = mlj_resnet.builder
+    model_resnet = AutomationLabsSystems.ResNet()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -446,7 +447,7 @@ end
     #extract best model from the all trained models
     mlj_resnet = fitted_params(fitted_params(resnet_machine).machine).best_model
     f_resnet = fitted_params(fitted_params(resnet_machine).machine).best_fitted_params[1]
-    model_resnet = mlj_resnet.builder
+    model_resnet = AutomationLabsSystems.ResNet()
 
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
 
@@ -533,7 +534,7 @@ end
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
     f_densenet =
         fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
-    model_densenet = mlj_densenet.builder
+    model_densenet = AutomationLabsSystems.DenseNet()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -618,7 +619,7 @@ end
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
     f_densenet =
         fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
-    model_densenet = mlj_densenet.builder
+    model_densenet = AutomationLabsSystems.DenseNet()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -703,7 +704,7 @@ end
     mlj_densenet = fitted_params(fitted_params(densenet_machine).machine).best_model
     f_densenet =
         fitted_params(fitted_params(densenet_machine).machine).best_fitted_params[1]
-    model_densenet = mlj_densenet.builder
+    model_densenet = AutomationLabsSystems.DenseNet()
 
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
 
@@ -781,7 +782,6 @@ end
 
 end
 
-
 @testset "Icnn model linear modeler MPC test" begin
 
     #get the icnn model to design the mpc controler
@@ -790,7 +790,7 @@ end
     #extract best model from the all trained models
     mlj_icnn = fitted_params(fitted_params(icnn_machine).machine).best_model
     f_icnn = fitted_params(fitted_params(icnn_machine).machine).best_fitted_params[1]
-    model_icnn = mlj_icnn.builder
+    model_icnn = AutomationLabsSystems.Icnn()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -873,7 +873,7 @@ end
     #extract best model from the all trained models
     mlj_icnn = fitted_params(fitted_params(icnn_machine).machine).best_model
     f_icnn = fitted_params(fitted_params(icnn_machine).machine).best_fitted_params[1]
-    model_icnn = mlj_icnn.builder
+    model_icnn = AutomationLabsSystems.Icnn()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -956,7 +956,7 @@ end
     #extract best model from the all trained models
     mlj_icnn = fitted_params(fitted_params(icnn_machine).machine).best_model
     f_icnn = fitted_params(fitted_params(icnn_machine).machine).best_fitted_params[1]
-    model_icnn = mlj_icnn.builder
+    model_icnn = AutomationLabsSystems.Icnn()
 
     method = AutomationLabsModelPredictiveControl.MixedIntegerLinearProgramming()
 
@@ -1042,7 +1042,7 @@ end
     #extract best model from the all trained models
     mlj_rbf = fitted_params(fitted_params(rbf_machine).machine).best_model
     f_rbf = fitted_params(fitted_params(rbf_machine).machine).best_fitted_params[1]
-    model_rbf = mlj_rbf.builder
+    model_rbf = AutomationLabsSystems.Rbf()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -1124,7 +1124,7 @@ end
     #extract best model from the all trained models
     mlj_rbf = fitted_params(fitted_params(rbf_machine).machine).best_model
     f_rbf = fitted_params(fitted_params(rbf_machine).machine).best_fitted_params[1]
-    model_rbf = mlj_rbf.builder
+    model_rbf = AutomationLabsSystems.Rbf()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -1206,7 +1206,7 @@ end
     #extract best model from the all trained models
     mlj_polynet = fitted_params(fitted_params(polynet_machine).machine).best_model
     f_polynet = fitted_params(fitted_params(polynet_machine).machine).best_fitted_params[1]
-    model_polynet = mlj_polynet.builder
+    model_polynet = AutomationLabsSystems.PolyNet()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -1290,7 +1290,7 @@ end
     #extract best model from the all trained models
     mlj_polynet = fitted_params(fitted_params(polynet_machine).machine).best_model
     f_polynet = fitted_params(fitted_params(polynet_machine).machine).best_fitted_params[1]
-    model_polynet = mlj_polynet.builder
+    model_polynet = AutomationLabsSystems.PolyNet()
 
     method = AutomationLabsModelPredictiveControl.NonLinearProgramming()
 
@@ -1464,7 +1464,7 @@ end
         fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_model
     f_neuralnetODE_type1 =
         fitted_params(fitted_params(neuralnetODE_type1_machine).machine).best_fitted_params[1]
-    model_neuralnetODE_type1 = mlj_neuralnetODE_type1.builder
+    model_neuralnetODE_type1 = AutomationLabsSystems.NeuralODE()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -1552,7 +1552,7 @@ end
         fitted_params(fitted_params(rknn1_machine).machine).best_model
     f_neuralnetODE_type1 =
         fitted_params(fitted_params(rknn1_machine).machine).best_fitted_params[1]
-    model_rknn1 = mlj_neuralnetODE_type1.builder
+    model_rknn1 = AutomationLabsSystems.Rknn1()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -1641,7 +1641,7 @@ end
         fitted_params(fitted_params(rknn2_machine).machine).best_model
     f_neuralnetODE_type1 =
         fitted_params(fitted_params(rknn2_machine).machine).best_fitted_params[1]
-    model_rknn2 = mlj_neuralnetODE_type1.builder
+    model_rknn2 = AutomationLabsSystems.Rknn2()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 
@@ -1729,7 +1729,7 @@ end
         fitted_params(fitted_params(rknn4_machine).machine).best_model
     f_neuralnetODE_type1 =
         fitted_params(fitted_params(rknn4_machine).machine).best_fitted_params[1]
-    model_rknn4 = mlj_neuralnetODE_type1.builder
+    model_rknn4 = AutomationLabsSystems.Rknn4()
 
     method = AutomationLabsModelPredictiveControl.LinearProgramming()
 

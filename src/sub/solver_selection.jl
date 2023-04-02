@@ -9,9 +9,7 @@
 const _IMPLEMENTATION_SOLVER_LIST = (
     osqp = osqp_solver_def(),
     scip = scip_solver_def(),
-    #mosek = mosek_solver_def(),
     ipopt = ipopt_solver_def(),
-    #highs = highs_solver_def(),
     auto = auto_solver_def(),
 )
 
@@ -22,8 +20,6 @@ function _JuMP_model_definition(
     solver_selection::Union{
         osqp_solver_def,
         scip_solver_def,
-        #mosek_solver_def,
-        #highs_solver_def,
         ipopt_solver_def,
     },
 )
@@ -100,15 +96,7 @@ function _selection_solver_JuMP_model(solver::osqp_solver_def)
 
     return model
 end
-#=
-function _selection_solver_JuMP_model(solver::highs_solver_def)
 
-    model = JuMP.Model(JuMP.optimizer_with_attributes(HiGHS.Optimizer))
-    #to do the right options
-
-    return model
-end
-=#
 function _selection_solver_JuMP_model(solver::ipopt_solver_def)
 
     model = JuMP.Model(JuMP.optimizer_with_attributes(Ipopt.Optimizer))
@@ -116,23 +104,7 @@ function _selection_solver_JuMP_model(solver::ipopt_solver_def)
 
     return model
 end
-#=
-function _selection_solver_JuMP_model(solver::mosek_solver_def)
 
-    model = JuMP.Model(
-        JuMP.optimizer_with_attributes(
-            MosekTools.Mosek.Optimizer,
-            "QUIET" => false,
-            "OPTIMIZER_MAX_TIME" => 300.0,
-            "INTPNT_CO_TOL_DFEAS" => 1e-7,
-        ),
-    )
-    # "OPTIMIZER_MAX_TIME" => 300.0,
-    #to do the rights option
-
-    return model
-end
-=#
 function _selection_solver_JuMP_model(solver::scip_solver_def)
 
     model = JuMP.Model(JuMP.optimizer_with_attributes(SCIP.Optimizer))

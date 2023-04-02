@@ -51,7 +51,7 @@ function proceed_controller(
 
         return controller
     end
-
+#=
     # Evaluate if mpc controller is quadratic or economic
     if mpc_controller_type == "economic_model_predictive_control"
 
@@ -77,10 +77,10 @@ function proceed_controller(
             max_time = mpc_max_time,
             terminal_ingredients = mpc_terminal_ingredient,
             solver = mpc_solver_type,
-        )
+        
 
         return controller
-    end
+    end=#
 end
 
 #NamedTuple default parameters definition

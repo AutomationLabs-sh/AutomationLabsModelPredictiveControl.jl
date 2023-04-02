@@ -1,5 +1,12 @@
 # AutomationLabsModelPredictiveControl Changelog
 
+## v0.1.4
+
+* Remove all code from economic model predictive control.
+* Remove dependencies MLJ, MLJMultivariateStatsInterface, Polyhedra, AutomationLabsIdentification.
+* Type models modification for removing AutomationLabsIdentification dependency.
+* Tests improvement.
+
 ## v0.1.3
 
 * Add Rknn1, Rknn2 and Rknn4 as models.

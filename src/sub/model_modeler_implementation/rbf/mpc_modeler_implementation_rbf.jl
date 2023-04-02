@@ -22,7 +22,7 @@ Modeler implementation of a Model Predictive Control.
 """
 function _model_predictive_control_modeler_implementation(
     method::LinearProgramming,
-    model_mlj::AutomationLabsIdentification.Rbf,
+    model_mlj::AutomationLabsSystems.Rbf,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,
@@ -60,7 +60,7 @@ end
 ### Non linear MPC implementation method with Rbf ###
 function _model_predictive_control_modeler_implementation(
     method::NonLinearProgramming,
-    model_mlj::AutomationLabsIdentification.Rbf,
+    model_mlj::AutomationLabsSystems.Rbf,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,

@@ -22,7 +22,7 @@ Modeler implementation of a Model Predictive Control.
 """
 function _model_predictive_control_modeler_implementation(
     method::LinearProgramming,
-    model_mlj::AutomationLabsIdentification.Icnn,
+    model_mlj::AutomationLabsSystems.Icnn,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,
@@ -62,7 +62,7 @@ end
 
 function _model_predictive_control_modeler_implementation(
     method::NonLinearProgramming,
-    model_mlj::AutomationLabsIdentification.Icnn,
+    model_mlj::AutomationLabsSystems.Icnn,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,
@@ -192,7 +192,7 @@ end
 
 function _model_predictive_control_modeler_implementation(
     method::MixedIntegerLinearProgramming,
-    model_mlj::AutomationLabsIdentification.Icnn,
+    model_mlj::AutomationLabsSystems.Icnn,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,

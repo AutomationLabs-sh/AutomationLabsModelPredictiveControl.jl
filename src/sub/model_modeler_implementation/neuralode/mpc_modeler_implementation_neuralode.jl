@@ -22,7 +22,7 @@ Modeler implementation of a Model Predictive Control.
 """
 function _model_predictive_control_modeler_implementation(
     method::LinearProgramming,
-    model_mlj::AutomationLabsIdentification.NeuralODE,
+    model_mlj::AutomationLabsSystems.NeuralODE,
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
     horizon::Int,
     reference::ReferencesStateInput,

@@ -119,12 +119,13 @@ function _model_predictive_control_design(
         _memory_allocation_initialization_results_mpc(system, horizon)
 
 
-    return mpc_controller = ModelPredictiveControlController(
+    mpc_controller = ModelPredictiveControlController(
         system,
         tuning,
         initialization,
         computation_results,
     )
+    return mpc_controller
 end
 
 ### Blackbox system from identification or user selection ###
@@ -213,12 +214,14 @@ function _model_predictive_control_design(
     initialization, computation_results =
         _memory_allocation_initialization_results_mpc(system, horizon)
 
-    return mpc_controller = ModelPredictiveControlController(
+    mpc_controller = ModelPredictiveControlController(
         system,
         tuning,
         initialization,
         computation_results,
     )
+
+    return mpc_controller
 end
 
 """
@@ -411,6 +414,11 @@ function _create_quadratic_cost_function(
     e_u = model_mpc[:e_u]
     horizon = size(u, 2)
 
+    Q = deepcopy(weights.Q)
+    R = deepcopy(weights.R)
+    S = deepcopy(weights.S)
+    P = deepcopy(P_cost)
+
     #add the delta rate constraints if needed
     if weights.S[1, 1] != 0.0
         #add delta_u variable
@@ -422,7 +430,6 @@ function _create_quadratic_cost_function(
         for i = 1:horizon-1
             JuMP.@constraint(model_mpc, delta_u[:, i] .== u[:, i] .- u[:, i+1])
         end
-
     end
 
     #Add the quadratic cost function according to weight parameters
@@ -430,20 +437,20 @@ function _create_quadratic_cost_function(
         JuMP.@objective(
             model_mpc,
             Min,
-            e_x[:, end]' * P_cost * e_x[:, end] +
+            e_x[:, end]' * P * e_x[:, end] +
             sum(
-                e_x[:, i]' * weights.Q * e_x[:, i] + e_u[:, i]' * weights.R * e_u[:, i] for
+                e_x[:, i]' * Q * e_x[:, i] + e_u[:, i]' * R * e_u[:, i] for
                 i = 1:horizon
             ) +
-            sum(delta_u[:, i]' * weights.S * delta_u[:, i] for i = 1:horizon-1)
+            sum(delta_u[:, i]' * S * delta_u[:, i] for i = 1:horizon-1)
         )
 
     elseif weights.R[1, 1] != 0.0
         JuMP.@objective(
             model_mpc,
             Min,
-            e_x[:, end]' * P_cost * e_x[:, end] + sum(
-                e_x[:, i]' * weights.Q * e_x[:, i] + e_u[:, i]' * weights.R * e_u[:, i] for
+            e_x[:, end]' * P * e_x[:, end] + sum(
+                e_x[:, i]' * Q * e_x[:, i] + e_u[:, i]' * R * e_u[:, i] for
                 i = 1:horizon
             )
         )
@@ -452,10 +459,9 @@ function _create_quadratic_cost_function(
         JuMP.@objective(
             model_mpc,
             Min,
-            e_x[:, end]' * P_cost * e_x[:, end] +
-            sum(e_x[:, i]' * weights.Q * e_x[:, i] for i = 1:horizon)
+            e_x[:, end]' * P * e_x[:, end] +
+            sum(e_x[:, i]' * Q * e_x[:, i] for i = 1:horizon)
         )
-
     end
 
     return model_mpc
@@ -465,9 +471,9 @@ end
 #mandatory to evaluation activation function for MILP optimisation #to do
 function get_activation_function(
     method::Union{
-        AutomationLabsIdentification.Fnn,
-        AutomationLabsIdentification.Icnn,
-        AutomationLabsIdentification.Rbf,
+        AutomationLabsSystems.Fnn,
+        AutomationLabsSystems.Icnn,
+        AutomationLabsSystems.Rbf,
     },
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
 )
@@ -478,9 +484,9 @@ end
 
 function get_activation_function(
     method::Union{
-        AutomationLabsIdentification.ResNet,
-        AutomationLabsIdentification.DenseNet,
-        AutomationLabsIdentification.PolyNet,
+        AutomationLabsSystems.ResNet,
+        AutomationLabsSystems.DenseNet,
+        AutomationLabsSystems.PolyNet,
     },
     system::MathematicalSystems.ConstrainedBlackBoxControlDiscreteSystem,
 )

@@ -7,4 +7,3 @@ II/ At this time the MPC is implemented with multiple shooting, add the possibil
 
 III/ Implement the MPC with recurrent neural networks model
     
-IV/ Improve the empc
