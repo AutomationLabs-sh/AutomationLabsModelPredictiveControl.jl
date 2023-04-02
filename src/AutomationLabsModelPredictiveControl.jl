@@ -10,7 +10,6 @@ module AutomationLabsModelPredictiveControl
 import ControlSystems
 import Flux
 import ForwardDiff
-#import AutomationLabsIdentification
 import AutomationLabsSystems
 #import InvariantSets
 import Ipopt
